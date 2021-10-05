@@ -1,6 +1,9 @@
 const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
+
+const auth = require('./middlewares/auth');
+
 require('express-async-errors');
 const app = express();
 
@@ -13,6 +16,7 @@ app.use(express.json());
 //app.use('/api/user', require('./routes/user'));
 const PORT = process.env.PORT || 4000;
 
+app.use('/api/login', auth, require('./routes/login.route'));
 
 app.use(function(req, res, next) {
     res.status(404).json({
