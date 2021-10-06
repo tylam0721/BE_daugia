@@ -11,7 +11,6 @@ router.get('/', async function(req,res){
 })
 
 router.use('/auth/facebook', require('./social/facebook'));
-router.use('/auth/google', require('./social/google'));
 
 router.get('/', async function(req,res){
     const rows = await userModel.findAll();
