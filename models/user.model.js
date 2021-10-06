@@ -1,6 +1,8 @@
 const db = require('../utils/db');
 const tableName = 'user';
 
+
+
 module.exports = {
     findAll()
     {
@@ -9,7 +11,7 @@ module.exports = {
 
     async findById(id)
     {
-        const rows = await db(tableName).where('Id',id);
+        const rows = await db(tableName).where('id',id);
         if(rows.length === 0)
         {
             return null;
@@ -19,7 +21,7 @@ module.exports = {
 
     async findByMail(mail)
     {
-        const rows = await db(tableName).where('email','like',mail);
+        const rows = await db(tableName).where('Email','like',`${mail}`);
         if(rows.length === 0)
         {
             return null;

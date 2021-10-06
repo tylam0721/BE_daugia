@@ -1,0 +1,5 @@
+{
+    "authentication": {
+        "saltRounds": 8
+    }
+}
