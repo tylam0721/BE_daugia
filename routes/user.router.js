@@ -12,13 +12,4 @@ router.get('/', async function(req,res){
 
 router.use('/auth/facebook', require('./social/facebook'));
 
-router.get('/', async function(req,res){
-    const rows = await userModel.findAll();
-    res.json(rows);
-});
-router.get('/login', async function(req,res){
-    res.json({
-        message:"fail"
-    })
-})
 module.exports = router;
