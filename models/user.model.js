@@ -50,4 +50,13 @@ module.exports = {
     {
         return db(tableName).where('Id', id).update(user_noId);
     },
+
+    async isValidRefeshToken(id, refreshToken){
+        const rows = await db(tableName).where('Id',id).andWhere('RefreshToken',refreshToken);
+        if(rows.length === 0)
+        {
+            return false;
+        }
+        return true;
+    }
 }

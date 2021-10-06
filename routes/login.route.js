@@ -1,6 +1,9 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const randomstring = require('randomstring');
+const refresh_schema = require('../schemas/refresh.json');
+
 
 const userModel = require('../models/user.model');
 
@@ -29,25 +32,56 @@ router.post('/',validate(schema),async function(req,res){
 
     const payload ={
         userId: user.id,
-
+        scope: user.Scope
     }
 
     const opts={
-        expiresIn: 30 * 60 // seconds
+        expiresIn: 30 * 60 // 30 phút
     }
 
     const accessToken = jwt.sign(payload,'SECRET_KEY',opts);
-
-
+    const refreshToken = randomstring.generate(80);
+    await userModel.patch(user.id,{
+        RefreshToken: refreshToken
+    });
 
     return json({
         authenticated: true,
         accessToken,
-        refreshToken: 'refreshToken',
+        refreshToken
     });
 
 });
 
 
+router.post('/refresh', validate(refresh_schema), async function(req,res){
+    const {accessToken, refreshToken} = req.body;
+
+    try{
+        const {userId} = jwt.verify(accessToken,'SECRET_KEY',{
+            ignoreExpiration: true
+        });
+
+        const ret = await userModel.isValidRefreshToken(userId,refreshToken);
+
+        if(ret === true)
+        {
+            const payload = {userId}
+            const opts = {
+                expiresIn: 10 * 60
+            }
+            const newAccessToken = jwt.sign(payload,'SECRET_KEY',opts);
+            return res.json({
+                accessToken: newAccessToken
+            });
+        }
+        return res.status(401).json({message: 'Invalid refresh token'});
+
+    }
+    catch(err){
+        return res.status(401).json({message: 'Invalid access token'});
+    }
+
+});
 
 module.exports = router;
