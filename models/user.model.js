@@ -1,7 +1,5 @@
-const db = require('../../utils/db');
+const db = require('../utils/db');
 const tableName = 'user';
-
-
 
 module.exports = {
     findAll()
