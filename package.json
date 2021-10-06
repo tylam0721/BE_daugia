@@ -1,5 +1,5 @@
 {
-  "name": "WebDauGia",
+  "name": "webdaugia",
   "version": "1.0.0",
   "description": "HCB1 - Quy Trình Phần Mềm - Nhóm 4 - Nhà Trọ Việt Nam",
   "main": "index.js",
@@ -37,6 +37,8 @@
     "multer": "^1.4.3",
     "mysql2": "^2.2.5",
     "nodemailer": "^6.6.3",
+    "passport": "^0.5.0",
+    "passport-facebook": "^3.0.0",
     "randomstring": "^1.2.1",
     "uuid": "^8.3.2",
     "uuid-token-generator": "^1.0.0",
