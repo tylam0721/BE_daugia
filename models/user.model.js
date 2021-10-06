@@ -31,7 +31,7 @@ module.exports = {
 
     async findByUserName(username)
     {
-        const rows = await db(tableName).where('Username','like',mail);
+        const rows = await db(tableName).where('Username',username);
         if(rows.length === 0)
         {
             return null;

@@ -1,5 +1,8 @@
 {
     "authentication": {
         "saltRounds": 8
+    },
+    "accessToken":{
+        "ExpiredIn": 30 
     }
 }

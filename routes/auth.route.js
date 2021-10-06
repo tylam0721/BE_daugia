@@ -4,26 +4,28 @@ const jwt = require('jsonwebtoken');
 const randomstring = require('randomstring');
 const refresh_schema = require('../schemas/refresh.json');
 
-
 const userModel = require('../models/user.model');
 
 const validate = require('../middlewares/validate');
 const schema = require('../schemas/login.json');
 const { json } = require('body-parser');
 
+const config=require('../config/default.json');
+
 const router = express.Router();
 
 router.post('/',validate(schema),async function(req,res){
-    const user = await userModel.findByUserName(req.body.username);
+    const user = await userModel.findByUserName(req.body.Username);
     if(user === null)
     {
         return res.status(401).json({
             authenticated: false
         });
     }   
-    const rawPassword = req.body.password;
-    const hashedPassword = user.Password;
-    if(bcrypt.compareSync(rawPassword,hashedPassword))
+
+    var validUser = bcrypt.compareSync(req.body.Password, user.Password); 
+    console.log(validUser);
+    if(validUser === false)
     {
         return res.status(401).json({
             authenticated: false
@@ -36,7 +38,7 @@ router.post('/',validate(schema),async function(req,res){
     }
 
     const opts={
-        expiresIn: 30 * 60 // 30 phút
+        expiresIn: config.accessToken.ExpiredIn * 60 // phút
     }
 
     const accessToken = jwt.sign(payload,'SECRET_KEY',opts);
@@ -45,7 +47,7 @@ router.post('/',validate(schema),async function(req,res){
         RefreshToken: refreshToken
     });
 
-    return json({
+    return res.status(200).json({
         authenticated: true,
         accessToken,
         refreshToken
@@ -68,7 +70,7 @@ router.post('/refresh', validate(refresh_schema), async function(req,res){
         {
             const payload = {userId}
             const opts = {
-                expiresIn: 10 * 60
+                expiresIn: config.accessToken.ExpiredIn * 60
             }
             const newAccessToken = jwt.sign(payload,'SECRET_KEY',opts);
             return res.json({
