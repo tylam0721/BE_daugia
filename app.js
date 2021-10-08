@@ -22,7 +22,7 @@ app.use('/api/user',require('./routes/user.router'));
 
 app.use('/api/category',require('./routes/category.route'));
 
-app.use('/api/login', auth, require('./routes/login.route'));
+// app.use('/api/login', auth, require('./routes/login.route'));
 
 app.use('/user',require('./routes/user.router'));
 
