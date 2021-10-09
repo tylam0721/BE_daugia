@@ -3,7 +3,7 @@ const router = express.Router();
 const moment = require('moment');
 const passport = require('passport');
 const Strategy  = require('passport-facebook').Strategy;
-const userModel = require('../../models/user.model');
+const userModel = require('../../services/models/user.model');
 
 passport.use(new Strategy({
     clientID: 1202091756958601,

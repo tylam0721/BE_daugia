@@ -3,13 +3,13 @@ var nodemailer = require('nodemailer');
 var transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: '',
-      pass: ''
+      user: 'webdaugiaonline@gmail.com',
+      pass: 'rgcezfpxehbaqidk'
     }
   });
 
 var defaultMail = {
-    from: '',
+    from: 'webdaugiaonline@gmail.com',
     text: '',
 };
 

@@ -1,5 +1,5 @@
 const express=require('express');
-const userModel=require('../models/user.model');
+const userModel=require('../services/models/user.model');
 const router = express.Router();
 const schema = require('../schemas/user.json');
 const bcrypt = require('bcryptjs');
@@ -7,6 +7,7 @@ const moment = require('moment');
 const validate = require('../middlewares/validate');
 const config=require('../config/default.json');
 const randomstring = require('randomstring');
+const mailer = require('../utils/mailer');
 
 router.get('/', async function(req,res){
     const rows = await userModel.findAll();
@@ -42,7 +43,7 @@ router.post('/register',validate(schema),async function(req,res){
         }
     };
 
-   /* const OTP = randomstring.generate(12);
+    const OTP = randomstring.generate(12);
     mailer.send({
         from: 'webdaugiaonline@gmail.com',
         to: `${req.body.Email}`,
@@ -50,13 +51,13 @@ router.post('/register',validate(schema),async function(req,res){
         html: `
         Xin chào ${req.body.Fullname}, cảm ơn bạn đã tham gia trang web Đấu Giá Online.
         <br> 
-        Hãy nhấp vào 
+        Hãy truy cập vào 
         <a href="https://fedaugia.herokuapp.com/AccountActivation/${OTP}"> đây </a> 
-        để xác minh email và kích hoạt tài khoản của bạn.
+        để xác thực email và kích hoạt tài khoản đã đăng ký của bạn.
         <br>
         (Đây là thư tự động vui lòng không phản hồi)
         `
-    });*/
+    });
 
     res.status(201).json(
         {

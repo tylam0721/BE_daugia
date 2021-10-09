@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const randomstring = require('randomstring');
 const refresh_schema = require('../schemas/refresh.json');
 
-const userModel = require('../models/user.model');
+const userModel = require('../services/models/user.model');
 
 const validate = require('../middlewares/validate');
 const schema = require('../schemas/login.json');
