@@ -42,7 +42,7 @@ router.post('/register',validate(schema),async function(req,res){
         }
     };
 
-    const OTP = randomstring.generate(12);
+   /* const OTP = randomstring.generate(12);
     mailer.send({
         from: 'webdaugiaonline@gmail.com',
         to: `${req.body.Email}`,
@@ -56,7 +56,7 @@ router.post('/register',validate(schema),async function(req,res){
         <br>
         (Đây là thư tự động vui lòng không phản hồi)
         `
-    });
+    });*/
 
     res.status(201).json(
         {
