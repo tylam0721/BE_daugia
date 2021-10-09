@@ -18,7 +18,7 @@ const PORT = process.env.PORT || 4000;
 
 app.use('/api/auth', require('./routes/auth.route'));
 
-app.use('/api/user',require('./routes/user.router'));
+app.use('/api/user', require('./routes/user.router'));
 
 app.use('/api/category',require('./routes/category.route'));
 
@@ -39,11 +39,7 @@ app.use(function(err, req, res, next) {
         message: 'server failure'
     });
 });
-app.all('/', function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "X-Requested-With");
-    next()
-  });
+
 
 app.listen(PORT, function() {
     console.log(` at http://localhost:${PORT}`);
