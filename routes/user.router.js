@@ -6,6 +6,7 @@ const bcrypt = require('bcryptjs');
 const moment = require('moment');
 const validate = require('../middlewares/validate');
 const config=require('../config/default.json');
+const randomstring = require('randomstring');
 
 router.get('/', async function(req,res){
     const rows = await userModel.findAll();
@@ -21,7 +22,7 @@ router.post('/register',validate(schema),async function(req,res){
     }
     else if (req.body.password != req.body.cf_password) {
         return res.json({
-            message:'confirm passowrd must be valid',
+            message:'confirm password must be valid',
         });
     }
     else {
@@ -40,6 +41,23 @@ router.post('/register',validate(schema),async function(req,res){
             });
         }
     };
+
+    const OTP = randomstring.generate(12);
+    mailer.send({
+        from: 'webdaugiaonline@gmail.com',
+        to: `${req.body.Email}`,
+        subject: 'Web Đấu Giá Online: Xác thực tài khoản của bạn.',
+        html: `
+        Xin chào ${req.body.Fullname}, cảm ơn bạn đã tham gia trang web Đấu Giá Online.
+        <br> 
+        Hãy nhấp vào 
+        <a href="https://fedaugia.herokuapp.com/AccountActivation/${OTP}"> đây </a> 
+        để xác minh email và kích hoạt tài khoản của bạn.
+        <br>
+        (Đây là thư tự động vui lòng không phản hồi)
+        `
+    });
+
     res.status(201).json(
         {
             message:"Register successfull"
