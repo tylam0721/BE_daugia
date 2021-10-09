@@ -24,7 +24,7 @@ app.use('/api/category',require('./routes/category.route'));
 
 // app.use('/api/login', auth, require('./routes/login.route'));
 
-app.use('/user',require('./routes/user.router'));
+app.use('/api/otp',require('./routes/otp.router'));
 
 
 app.use(function(req, res, next) {

@@ -16,7 +16,7 @@ router.get('/', async function(req,res){
 
 router.post('/register',validate(schema),async function(req,res){
     const user = await userModel.findByMail(req.body.email);
-    if (user) {
+    if (user != null) {
         return res.json({
             message:'email is existed',
         });
@@ -33,7 +33,12 @@ router.post('/register',validate(schema),async function(req,res){
             Email: req.body.Email,
             Password: password_hash,
             Birthday: moment(req.body.Birthday, 'MM/DD/YYYY').format('YYYY-MM-DD'),
-            Username: req.body.Username
+            Username: req.body.Username,
+            RateGood: 0,
+            RateBad: 0,
+            IsOTP: 0,
+            Isdeleted: 0,
+            DateCreated: new Date(Date.now())
         }
         const affectedRows = await userModel.add(user);
         if(affectedRows === 0){
@@ -43,7 +48,7 @@ router.post('/register',validate(schema),async function(req,res){
         }
     };
 
-    const OTP = randomstring.generate(12);
+    const OTPCode = randomstring.generate(12);
     mailer.send({
         from: 'webdaugiaonline@gmail.com',
         to: `${req.body.Email}`,
@@ -52,7 +57,7 @@ router.post('/register',validate(schema),async function(req,res){
         Xin chào ${req.body.Fullname}, cảm ơn bạn đã tham gia trang web Đấu Giá Online.
         <br> 
         Hãy truy cập vào 
-        <a href="https://fedaugia.herokuapp.com/AccountActivation/${OTP}"> đây </a> 
+        <a href="https://fedaugia.herokuapp.com/AccountActivation/${OTPCode}"> đây </a> 
         để xác thực email và kích hoạt tài khoản đã đăng ký của bạn.
         <br>
         (Đây là thư tự động vui lòng không phản hồi)
@@ -65,6 +70,7 @@ router.post('/register',validate(schema),async function(req,res){
         }
     );
 })
+
 
 router.use('/auth/facebook', require('./social/facebook'));
 

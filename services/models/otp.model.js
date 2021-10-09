@@ -29,14 +29,14 @@ module.exports = {
         return rows[0];
     },
 
-    async findByUserId(id)
+    async findByEmail(Email)
     {
-        const rows = await db(tableName).where('UserId',id);
+        const rows = await db(tableName).where('Email','like',`${Email}`);
         if(rows.length === 0)
         {
             return null;
         }
-        return rows[0]; 
+        return rows[0];
     },
     
     add(otp){
