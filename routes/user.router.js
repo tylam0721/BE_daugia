@@ -8,6 +8,7 @@ const validate = require('../middlewares/validate');
 const config=require('../config/default.json');
 const randomstring = require('randomstring');
 const mailer = require('../utils/mailer');
+require('moment/locale/vi');
 
 router.get('/', async function(req,res){
     const rows = await userModel.findAll();

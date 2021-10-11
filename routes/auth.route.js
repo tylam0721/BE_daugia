@@ -24,14 +24,18 @@ router.post('/',validate(schema),async function(req,res){
     }   
 
     var validUser = bcrypt.compareSync(req.body.Password, user.Password); 
-    console.log(validUser);
     if(validUser === false)
     {
         return res.status(401).json({
             authenticated: false
         });
     }
-
+    if(user.isOTP == 0)
+    {
+        return res.status(401).json({
+            authenticated: false
+        });
+    }
     const payload ={
         userId: user.id,
         scope: user.Scope
