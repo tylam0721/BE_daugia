@@ -28,6 +28,9 @@ app.use('/api/otp',require('./routes/otp.route'));
 
 app.use('/api/role',require('./routes/role.router'));
 
+app.use('/api/product',require('./routes/product.route'));
+
+
 app.use(function(req, res, next) {
     res.status(404).json({
         message: 'endpoint not found'
