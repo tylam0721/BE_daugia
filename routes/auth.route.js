@@ -38,7 +38,8 @@ router.post('/',validate(schema),async function(req,res){
     }
     const payload ={
         userId: user.id,
-        username: user.Username,
+        firstName: user.Firstname,
+        lastName: user.Lastname,
         scope: user.Scope
     }
 
