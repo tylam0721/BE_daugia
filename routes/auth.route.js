@@ -15,7 +15,7 @@ const config=require('../config/default.json');
 const router = express.Router();
 
 router.post('/',validate(schema),async function(req,res){
-    const user = await userModel.findByUserName(req.body.Username);
+    const user = await userModel.findByMail(req.body.Email);
     if(user === null)
     {
         return res.status(401).json({
