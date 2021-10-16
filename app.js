@@ -26,6 +26,7 @@ app.use('/api/category', auth, require('./routes/category.route'));
 
 app.use('/api/otp',require('./routes/otp.route'));
 
+app.use('/api/role',require('./routes/role.router'));
 
 app.use(function(req, res, next) {
     res.status(404).json({
