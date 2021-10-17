@@ -2,12 +2,14 @@ const express=require('express');
 const userModel=require('../services/models/user.model');
 const router = express.Router();
 const schema = require('../schemas/user.json');
+const update_user_info_schema = require('../schemas/update_user_info.json');
 const bcrypt = require('bcryptjs');
 const moment = require('moment');
 const validate = require('../middlewares/validate');
 const config=require('../config/default.json');
 const randomstring = require('randomstring');
 const mailer = require('../utils/mailer');
+const { json } = require('body-parser');
 require('moment/locale/vi');
 
 router.get('/', async function(req,res){
@@ -115,6 +117,25 @@ router.put('/update-password/:id', async function(req,res){
         return res.json({message: "Something went wrong"}).status(404).end();
     }
     res.json({"message": "Password update successfully!"}).status(200).end();
+})
+
+router.put('/info/update', validate(update_user_info_schema), async function(req,res){
+    const user = await userModel.findById(req.body.Id);
+    if (!user) {
+        return res.status(404).json({
+            message:'User not found',
+        });
+    }
+    const userData = {
+        Id: req.body.Id,
+        Email: req.body.Email,
+        Address: req.body.Address,
+        Birthday: moment(req.body.Birthday, 'MM/DD/YYYY').format('YYYY-MM-DD'),
+        Firstname: req.body.Firstname,
+        Lastname: req.body.Lastname,
+    }
+    await userModel.update(userData);
+    return res.json({message: "User info updated"}).status(200).end();
 })
 
 router.use('/auth/facebook', require('./social/facebook'));

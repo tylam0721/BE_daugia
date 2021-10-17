@@ -1,4 +1,5 @@
 const db = require('../../utils/db');
+const { update } = require('./image.model');
 const tableName = 'user';
 
 module.exports = {
@@ -63,5 +64,14 @@ module.exports = {
 
     async updatePassword(id, newHashPassword) {
         return await db(tableName).where('Id', id).update('Password', newHashPassword);
+    },
+
+    async update(user) {
+        return await db(tableName).where('Id', user.Id)
+            .update('Email', user.Email)
+            .update('Adress', user.Address)
+            .update('Birthday', user.Birthday)
+            .update('FirstName', user.Firstname)
+            .update('LastName', user.Lastname);
     }
 }
