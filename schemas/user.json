@@ -6,7 +6,7 @@
         },
         "Email": {
             "type": "string"
-        },
+        }
     },
     "required": [
         "Password",

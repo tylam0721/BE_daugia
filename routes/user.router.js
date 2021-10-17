@@ -16,13 +16,13 @@ router.get('/', async function(req,res){
 })
 
 router.post('/register',validate(schema),async function(req,res){
-    const user = await userModel.findByMail(req.body.email);
+    const user = await userModel.findByMail(req.body.Email);
     if (user != null) {
         return res.json({
             message:'email is existed',
         });
     }
-    else if (req.body.password != req.body.cf_password) {
+    else if (req.body.Password != req.body.cf_password) {
         return res.json({
             message:'confirm password must be valid',
         });
