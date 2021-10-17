@@ -30,11 +30,12 @@ router.post('/register',validate(schema),async function(req,res){
     else {
         const password_hash = bcrypt.hashSync(req.body.Password, config.authentication.saltRounds);
         const user ={
-            Fullname: req.body.Fullname,
+            
             Email: req.body.Email,
             Password: password_hash,
             Birthday: moment(req.body.Birthday, 'MM/DD/YYYY').format('YYYY-MM-DD'),
-            Username: req.body.Username,
+            Firstname: req.body.Firstname,
+            Lastname: req.body.Lastname,
             RateGood: 0,
             RateBad: 0,
             IsOTP: 0,

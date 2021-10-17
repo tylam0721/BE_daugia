@@ -1,13 +1,7 @@
 {
     "type": "object",
     "properties": {
-        "Username": {
-            "type": "string"
-        },
         "Password": {
-            "type": "string"
-        },
-        "Fullname": {
             "type": "string"
         },
         "Email": {
@@ -18,7 +12,6 @@
         }
     },
     "required": [
-        "Username",
         "Password",
         "Fullname",
         "Email"
