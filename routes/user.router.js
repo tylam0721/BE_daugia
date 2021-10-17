@@ -73,6 +73,16 @@ router.post('/register',validate(schema),async function(req,res){
     );
 })
 
+router.get('/info/:id', async function(req,res){
+    if (!req.params.id) {
+        return res.json({message: "400 Bad request"}).status(400).end();
+    }
+    const rows = await userModel.findById(req.params.id);
+    if (!rows) {
+        return res.json({message: "404 Not found"}).status(404).end();
+    }
+    res.json(rows).status(200).end();
+})
 
 router.use('/auth/facebook', require('./social/facebook'));
 
