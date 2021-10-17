@@ -84,6 +84,22 @@ router.get('/info/:id', async function(req,res){
     res.json(rows).status(200).end();
 })
 
+router.put('/update-password/:id', async function(req,res){
+    const userId = req.params.id;
+    const newPassword = req.body.NewPassword;
+
+    if (!userId || !newPassword) {
+        return res.json({message: "400 Bad request"}).status(400).end();
+    }
+
+    var newHashPassword = bcrypt.hashSync(newPassword, config.authentication.saltRounds);
+    const rows = await userModel.updatePassword(userId, newHashPassword);
+    if (!rows) {
+        return res.json({message: "Something went wrong"}).status(404).end();
+    }
+    res.json({"message": "Password update successfully!"}).status(200).end();
+})
+
 router.use('/auth/facebook', require('./social/facebook'));
 
 module.exports = router;

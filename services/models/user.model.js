@@ -59,5 +59,9 @@ module.exports = {
             return false;
         }
         return true;
+    },
+
+    async updatePassword(id, newHashPassword) {
+        return await db(tableName).where('Id', id).update('Password', newHashPassword);
     }
 }
