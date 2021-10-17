@@ -13,7 +13,6 @@
     },
     "required": [
         "Password",
-        "Fullname",
         "Email"
     ],
     "additionalProperties": false
