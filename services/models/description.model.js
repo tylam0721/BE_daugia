@@ -11,5 +11,9 @@ module.exports = {
     },
     delete(id){
         return db(tableName).where('id', id).update('Isdeleted', 1);
+    },
+
+    updateIsCheckReturn(id){
+        return db(tableName).where('IdProduct', id).update('IsCheckReturn', 1);
     }
 }   
