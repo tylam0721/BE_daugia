@@ -5,7 +5,7 @@ module.exports = {
 
     findAll()
     {
-        return db(tableName);
+        return db(tableName).where('Isdeleted', 0);
     },
 
     async findById(id)
