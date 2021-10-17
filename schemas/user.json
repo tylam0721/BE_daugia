@@ -1,27 +1,32 @@
 {
     "type": "object",
     "properties": {
-        "Username": {
-            "type": "string"
-        },
         "Password": {
-            "type": "string"
-        },
-        "Fullname": {
             "type": "string"
         },
         "Email": {
             "type": "string"
         },
-        "Birthday": {
+        "cf_password":{
+            "type": "string"
+        },
+        "Firstname":{
+            "type": "string"
+        },
+        "Lastname":{
+            "type": "string"
+        },
+        "Birthday":{
             "type": "string"
         }
     },
     "required": [
-        "Username",
         "Password",
-        "Fullname",
-        "Email"
+        "cf_password",
+        "Email",
+        "Firstname",
+        "Lastname",
+        "Birthday"
     ],
     "additionalProperties": false
 }
