@@ -2,6 +2,8 @@ const express = require('express');
 
 const productModel = require('../services/models/product.model');
 
+const descriptionModel = require('../services/models/description.model');
+
 const multer = require('multer');
 const imageModel = require("../services/models/image.model");
 const upload = multer()
@@ -61,7 +63,28 @@ const router = express.Router();
     });
   });
 
-  router.post("/uploadImage", upload.any(), async (req, res) => {
+  router.post('/add-des', async (req, res) =>{
+    const data = req.body;
+
+    var a = new Date().toString();
+
+    console.log(a);
+
+    const description = {
+        IdProduct: data.IdProduct,
+        Note: data.Note
+    } 
+
+    const raw = await descriptionModel.add(description);
+    if (raw === 0) {
+      return res.status(500).json("was row ecfect").end();
+    }
+    res.status(202).json({
+        message: "add description product successfully"
+    });
+  });
+
+router.post("/uploadImage", upload.any(), async (req, res) => {
     const id = req.body.IdProduct;
 
     for (let i = 0; i < req.files.length; i++) {
