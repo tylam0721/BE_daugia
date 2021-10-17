@@ -6,11 +6,27 @@
         },
         "Email": {
             "type": "string"
+        },
+        "cf_password":{
+            "type": "string"
+        },
+        "Firstname":{
+            "type": "string"
+        },
+        "Lastname":{
+            "type": "string"
+        },
+        "Birthday":{
+            "type": "string"
         }
     },
     "required": [
         "Password",
-        "Email"
+        "cf_password",
+        "Email",
+        "Firstname",
+        "Lastname",
+        "Birthday"
     ],
     "additionalProperties": false
 }
