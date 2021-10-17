@@ -23,4 +23,8 @@ module.exports = {
     {
         return await db(userTableName).where('id', userId).update('scope', newRoleId);
     },   
+    async updateSellerToBidder(userId)
+    {
+        return await db(userTableName).where('id', userId).update('scope', 5);
+    },   
 }
