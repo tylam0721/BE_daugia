@@ -84,12 +84,29 @@ router.get('/info/:id', async function(req,res){
     res.json(rows).status(200).end();
 })
 
+router.get('/info/:id', async function(req,res){
+    if (!req.params.id) {
+        return res.json({message: "400 Bad request"}).status(400).end();
+    }
+    const rows = await userModel.findById(req.params.id);
+    if (!rows) {
+        return res.json({message: "404 Not found"}).status(404).end();
+    }
+    res.json(rows).status(200).end();
+})
+
 router.put('/update-password/:id', async function(req,res){
     const userId = req.params.id;
     const newPassword = req.body.NewPassword;
+    const oldPassword = req.body.OldPassword;
 
-    if (!userId || !newPassword) {
+    if (!userId || !newPassword || !oldPassword) {
         return res.json({message: "400 Bad request"}).status(400).end();
+    }
+
+    var user = await userModel.findById(userId);
+    if (!await bcrypt.compare(oldPassword, user.Password)) {
+        return res.json({message: "Password's not correct"}).status(400).end();
     }
 
     var newHashPassword = bcrypt.hashSync(newPassword, config.authentication.saltRounds);
