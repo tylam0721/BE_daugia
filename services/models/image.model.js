@@ -25,7 +25,7 @@ module.exports = {
 
   deleteImg(name, id){
     return db('image')
-      .where('roomID', id).andWhere('name', name)
+      .where('IdProdcut', id).andWhere('name', name)
       .del();
   },
 
