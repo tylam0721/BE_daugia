@@ -7,9 +7,6 @@
         "Email": {
             "type": "string"
         },
-        "Birthday": {
-            "type": "string"
-        }
     },
     "required": [
         "Password",
