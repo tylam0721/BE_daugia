@@ -18,12 +18,12 @@ router.get('/', async function(req,res){
 router.post('/register',validate(schema),async function(req,res){
     const user = await userModel.findByMail(req.body.Email);
     if (user != null) {
-        return res.json({
+        return res.status(403).json({
             message:'email is existed',
         });
     }
     else if (req.body.Password != req.body.cf_password) {
-        return res.json({
+        return res.status(403).json({
             message:'confirm password must be valid',
         });
     }
@@ -44,7 +44,7 @@ router.post('/register',validate(schema),async function(req,res){
         }
         const affectedRows = await userModel.add(user);
         if(affectedRows === 0){
-            return res.json({
+            return res.status(401).json({
                 message:'error when create new user',
             });
         }
