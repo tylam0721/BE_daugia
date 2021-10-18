@@ -138,6 +138,11 @@ router.put('/info/update', validate(update_user_info_schema), async function(req
     return res.json({message: "User info updated"}).status(200).end();
 })
 
+router.get('/profile/:userId',async function(req,res){
+    const user = await userModel.findById(req.params.userId);
+
+    return res.json(user).status(200).end();
+})
 router.use('/auth/facebook', require('./social/facebook'));
 
 module.exports = router;
