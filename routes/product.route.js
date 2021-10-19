@@ -110,6 +110,97 @@ const formatJson = (product, userbuyer, userSeller, images, des) => {
     }
     res.status(202).json(product_found);
   });
+
+  //GET Product by category
+  router.get('/category/:id', async (req, res) =>{
+
+    const id = req.params.id;
+
+    const data = await productModel.findAll();
+    const getuser = await userModal.findAll();
+    const getimage = await imageModel.findAll();
+    const getdes = await desModel.findAll();
+    product_found = [];
+    
+        data.map((r) => {
+            image_found = [];
+            user_buyer_found = [];
+            user_seller_found = [];
+            des_found = [];
+            if(r.IdCategory == id){
+                getimage.map((i) => {
+                    if(i.IdProduct == r.id){
+                        image_found.push(formatJsonImage(i));
+                    }
+                });
+                getuser.map((u) => {
+                    if(u.id == r.IdUserBuyer){
+                        user_buyer_found.push(formatJsonUser(u)); 
+                    }
+                    if(u.id == r.IdUserSeller){
+                        user_seller_found.push(formatJsonUser(u));
+                    }
+                });
+                getdes.map((d) => {
+                    if(d.IdProduct == r.id){
+                        des_found.push(formatJsonDes(d));
+                    }
+                });
+                product_found.push(formatJson(r, user_buyer_found, user_seller_found, image_found, des_found));
+            }
+        });   
+
+    if (data === 0) {
+      return res.status(500).json("was row ecfect").end();
+    }
+    res.status(202).json(product_found);
+  });
+
+  //GET Product by product
+  router.get('/:id', async (req, res) =>{
+
+    const id = req.params.id;
+
+    const data = await productModel.findAll();
+    const getuser = await userModal.findAll();
+    const getimage = await imageModel.findAll();
+    const getdes = await desModel.findAll();
+    product_found = [];
+    
+        data.map((r) => {
+            image_found = [];
+            user_buyer_found = [];
+            user_seller_found = [];
+            des_found = [];
+            if(r.id == id){
+                getimage.map((i) => {
+                    if(i.IdProduct == r.id){
+                        image_found.push(formatJsonImage(i));
+                    }
+                });
+                getuser.map((u) => {
+                    if(u.id == r.IdUserBuyer){
+                        user_buyer_found.push(formatJsonUser(u)); 
+                    }
+                    if(u.id == r.IdUserSeller){
+                        user_seller_found.push(formatJsonUser(u));
+                    }
+                });
+                getdes.map((d) => {
+                    if(d.IdProduct == r.id){
+                        des_found.push(formatJsonDes(d));
+                    }
+                });
+                product_found.push(formatJson(r, user_buyer_found, user_seller_found, image_found, des_found));
+            }
+        });
+
+    if (data === 0) {
+      return res.status(500).json("was row ecfect").end();
+    }
+    res.status(202).json(product_found);
+  });
+
 // DELETE product
   router.get('/delete/:id', async (req, res) =>{
     const data = req.params.id;
@@ -170,8 +261,6 @@ const formatJson = (product, userbuyer, userSeller, images, des) => {
         message: "add product successfully"
     });
   });
-
-
 
   // API Update Description product
   router.post('/add-des', async (req, res) =>{
