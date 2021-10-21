@@ -30,5 +30,15 @@ router.put('/seller-to-bidder/:userId', async function(req,res){
     roleModel.updateSellerToBidder(userId);
     return res.json({message: "Updated user role"}).status(200).end();
 })
+router.put('/bidder-to-seller/:userId', async function(req,res){
+    const userId = req.params.userId;
+
+    if (!userId) {
+        return res.json({message: "404 Bad request"}).status(400).end();
+    }
+
+    roleModel.updateUserRole(userId,15);
+    return res.json({message: "Updated user role"}).status(200).end();
+})
 
 module.exports = router;

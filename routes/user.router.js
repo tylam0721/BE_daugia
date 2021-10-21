@@ -2,12 +2,14 @@ const express=require('express');
 const userModel=require('../services/models/user.model');
 const router = express.Router();
 const schema = require('../schemas/user.json');
+const update_user_info_schema = require('../schemas/update_user_info.json');
 const bcrypt = require('bcryptjs');
 const moment = require('moment');
 const validate = require('../middlewares/validate');
 const config=require('../config/default.json');
 const randomstring = require('randomstring');
 const mailer = require('../utils/mailer');
+const { json } = require('body-parser');
 require('moment/locale/vi');
 
 router.get('/', async function(req,res){
@@ -73,7 +75,74 @@ router.post('/register',validate(schema),async function(req,res){
     );
 })
 
+router.get('/info/:id', async function(req,res){
+    if (!req.params.id) {
+        return res.json({message: "400 Bad request"}).status(400).end();
+    }
+    const rows = await userModel.findById(req.params.id);
+    if (!rows) {
+        return res.json({message: "404 Not found"}).status(404).end();
+    }
+    res.json(rows).status(200).end();
+})
 
+router.get('/info/:id', async function(req,res){
+    if (!req.params.id) {
+        return res.json({message: "400 Bad request"}).status(400).end();
+    }
+    const rows = await userModel.findById(req.params.id);
+    if (!rows) {
+        return res.json({message: "404 Not found"}).status(404).end();
+    }
+    res.json(rows).status(200).end();
+})
+
+router.put('/update-password/:id', async function(req,res){
+    const userId = req.params.id;
+    const newPassword = req.body.NewPassword;
+    const oldPassword = req.body.OldPassword;
+
+    if (!userId || !newPassword || !oldPassword) {
+        return res.json({message: "400 Bad request"}).status(400).end();
+    }
+
+    var user = await userModel.findById(userId);
+    if (!await bcrypt.compare(oldPassword, user.Password)) {
+        return res.json({message: "Password's not correct"}).status(400).end();
+    }
+
+    var newHashPassword = bcrypt.hashSync(newPassword, config.authentication.saltRounds);
+    const rows = await userModel.updatePassword(userId, newHashPassword);
+    if (!rows) {
+        return res.json({message: "Something went wrong"}).status(404).end();
+    }
+    res.json({"message": "Password update successfully!"}).status(200).end();
+})
+
+router.put('/info/update', validate(update_user_info_schema), async function(req,res){
+    const user = await userModel.findById(req.body.Id);
+    if (!user) {
+        return res.status(404).json({
+            message:'User not found',
+        });
+    }
+    const userData = {
+        Id: req.body.Id,
+        Email: req.body.Email,
+        Address: req.body.Address,
+        Birthday: moment(req.body.Birthday, 'MM/DD/YYYY').format('YYYY-MM-DD'),
+        Firstname: req.body.Firstname,
+        Lastname: req.body.Lastname,
+    }
+    await userModel.update(userData);
+    return res.json({message: "User info updated"}).status(200).end();
+})
+
+router.get('/profile/:userId',async function(req,res){
+    const user = await userModel.findById(req.params.userId);
+
+    return res.json(user).status(200).end();
+})
 router.use('/auth/facebook', require('./social/facebook'));
 
 module.exports = router;
