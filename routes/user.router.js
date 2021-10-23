@@ -58,7 +58,7 @@ router.post('/register',validate(schema),async function(req,res){
         to: `${req.body.Email}`,
         subject: 'Web Đấu Giá Online: Xác thực tài khoản của bạn.',
         html: `
-        Xin chào ${req.body.Fullname}, cảm ơn bạn đã tham gia trang web Đấu Giá Online.
+        Xin chào ${req.body.Lastname}, cảm ơn bạn đã tham gia trang web Đấu Giá Online.
         <br> 
         Hãy truy cập vào 
         <a href="https://fedaugia.herokuapp.com/accountActivation/${OTPCode}"> đây </a> 
