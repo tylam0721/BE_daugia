@@ -85,7 +85,8 @@ router.get('/info/:id', async function(req,res){
         return res.json({message: "404 Not found"}).status(404).end();
     }
     var { Scope } = rows;
-    Scope = await roleModel.findById(Scope).NameRole;
+    const roleRecord = await roleModel.findById(Scope);
+    rows.Scope = roleRecord.NameRole;
     res.json(rows).status(200).end();
 })
 
