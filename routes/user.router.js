@@ -10,6 +10,7 @@ const config=require('../config/default.json');
 const randomstring = require('randomstring');
 const mailer = require('../utils/mailer');
 const { json } = require('body-parser');
+const roleModel=require('../services/models/role.model');
 require('moment/locale/vi');
 
 router.get('/', async function(req,res){
@@ -83,6 +84,9 @@ router.get('/info/:id', async function(req,res){
     if (!rows) {
         return res.json({message: "404 Not found"}).status(404).end();
     }
+    var { Scope } = rows;
+    const roleRecord = await roleModel.findById(Scope);
+    rows.Scope = roleRecord.NameRole;
     res.json(rows).status(200).end();
 })
 
