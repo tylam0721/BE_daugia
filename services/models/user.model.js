@@ -8,11 +8,17 @@ module.exports = {
   },
 
   findByBidder() {
-    return db(tableName).where("Isdeleted", 0).andWhere("Scope", 5);
+    return db(tableName)
+      .join("role", "user.Scope", "=", "role.id")
+      .where("user.Isdeleted", 0)
+      .andWhere("user.Scope", 5);
   },
 
   findBySeller() {
-    return db(tableName).where("Isdeleted", 0).andWhere("Scope", 15);
+    return db(tableName)
+      .join("role", "user.Scope", "=", "role.id")
+      .where("user.Isdeleted", 0)
+      .andWhere("user.Scope", 15);
   },
 
   async findById(id) {
