@@ -60,8 +60,6 @@ router.post("/update", async (req, res) => {
     DateCreated: new Date(),
   };
 
-  console.log(data);
-
   const raw = await categoryModel.update(data.id, category);
   if (raw === 0) {
     return res.status(500).json("was row ecfect").end();
