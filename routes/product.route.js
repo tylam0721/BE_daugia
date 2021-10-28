@@ -245,12 +245,10 @@ router.post("/add", async (req, res) => {
   };
 
   const raw = await productModel.add(product);
-  if (raw === 0) {
+  if (raw[0] === 0) {
     return res.status(500).json("was row ecfect").end();
   }
-  res.status(202).json({
-    message: "add product successfully",
-  });
+  res.status(202).json({productId: raw[0]});
 });
 // UPDATE Product
 router.post("/update", async (req, res) => {
