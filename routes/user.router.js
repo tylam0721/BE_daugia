@@ -62,7 +62,7 @@ router.post('/register',validate(schema),async function(req,res){
         Xin chào ${req.body.Lastname}, cảm ơn bạn đã tham gia trang web Đấu Giá Online.
         <br> 
         Hãy truy cập vào 
-        <a href="https://fedaugia.herokuapp.com/accountActivation/${OTPCode}"> đây </a> 
+        <a href="https://localhost:3000/accountActivation/${OTPCode}"> đây </a> 
         để xác thực email và kích hoạt tài khoản đã đăng ký của bạn.
         <br>
         (Đây là thư tự động vui lòng không phản hồi)
