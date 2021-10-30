@@ -36,15 +36,7 @@ module.exports = {
     }
     return rows[0];
   },
-
-  async findByUserName(username) {
-    const rows = await db(tableName).where("Username", username);
-    if (rows.length === 0) {
-      return null;
-    }
-    return rows[0];
-  },
-
+  
   add(actor) {
     return db(tableName).insert(actor);
   },
