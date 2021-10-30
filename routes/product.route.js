@@ -1,5 +1,4 @@
 const express = require("express");
-
 const productModel = require("../services/models/product.model");
 const descriptionModel = require("../services/models/description.model");
 const userModal = require("../services/models/user.model");
@@ -10,6 +9,7 @@ const upload = multer();
 const { v4: uuidv4 } = require("uuid");
 const { cloudinary } = require("../utils/cloudinary");
 const router = express.Router();
+
 
 var image_found = [];
 var user_seller_found = [];
@@ -166,7 +166,7 @@ router.get("/:id", async (req, res) => {
   const getimage = await imageModel.findAll();
   const getdes = await desModel.findAll();
   product_found = [];
-
+  broadcastAll(id);
   data.map((r) => {
     image_found = [];
     user_buyer_found = [];
@@ -244,6 +244,7 @@ router.post("/add", async (req, res) => {
   if (raw[0] === 0) {
     return res.status(500).json("was row ecfect").end();
   }
+  //broadcastAll(product);
   res.status(202).json({productId: raw[0]});
 });
 // UPDATE Product
