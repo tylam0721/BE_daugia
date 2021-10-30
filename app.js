@@ -1,3 +1,6 @@
+let WSServer = require('ws').Server;
+const ws = require('ws');
+let server = require('http').createServer();
 const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
@@ -44,10 +47,45 @@ app.use(function (err, req, res, next) {
   });
 });
 
+let wss;
+if(!wss)
+{
+    wss = new WSServer({
+
+        server: server
+      });
+      
+      // Also mount the app here
+      server.on('request', app);
+      
+      wss.on('connection', function connection(ws) {
+       
+        ws.on('message', function incoming(message) {
+          
+          console.log(`received: ${message}`);
+        });
+      });
+}
+
+server.listen(PORT, function() {
+  console.log(`ws://server listening on ${PORT}`);
+});
+
+global.broadcastAll = function (msg){
+  for( c of wss.clients){
+    if(c.readyState === ws.OPEN)
+    {
+      c.send(msg);
+    }
+  }
+}
+
 /*app.listen(PORT, function () {
   console.log(`App express at http://localhost:${PORT}`);
 });
 
 require('./ws');*/
 
-module.exports = app;
+module.exports = {
+  app: app,
+}
