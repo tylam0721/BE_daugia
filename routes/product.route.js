@@ -296,8 +296,8 @@ router.post("/add-des", async (req, res) => {
 });
 
 // API UPload Image của một product
-router.post("/uploadImage/:id", upload.any(), async (req, res) => {
-  const id = req.params.id;
+router.post("/uploadImage", upload.any(), async (req, res) => {
+  const id = req.query.id;
 
   for (let i = 0; i < req.files.length; i++) {
     let anh = "product_" + id + "_" + uuidv4().toString();
