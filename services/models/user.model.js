@@ -11,14 +11,38 @@ module.exports = {
     return db(tableName)
       .join("role", "user.Scope", "=", "role.id")
       .where("user.Isdeleted", 0)
-      .andWhere("user.Scope", 5);
+      .andWhere("user.Scope", 5).select('user.id', 
+      'user.Email', 
+      'user.Adress',
+      'user.Birthday',
+      'user.Firstname',
+      'user.DateCreated',
+      'user.DateUpdated',
+      'user.RateGood',
+      'user.RateBad',
+      'user.Scope',
+      'user.Lastname',
+      'role.NameRole'
+      );
   },
 
   findBySeller() {
     return db(tableName)
       .join("role", "user.Scope", "=", "role.id")
       .where("user.Isdeleted", 0)
-      .andWhere("user.Scope", 15);
+      .andWhere("user.Scope", 15).select('user.id', 
+      'user.Email', 
+      'user.Adress',
+      'user.Birthday',
+      'user.Firstname',
+      'user.DateCreated',
+      'user.DateUpdated',
+      'user.RateGood',
+      'user.RateBad',
+      'user.Scope',
+      'user.Lastname',
+      'role.NameRole'
+      );
   },
 
   async findById(id) {
