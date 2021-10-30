@@ -24,8 +24,6 @@ module.exports ={
             if(error) return console.log(error);
             console.log('mail sent:', info.response);
         });
-    }
-
-    
+    } 
    
 };

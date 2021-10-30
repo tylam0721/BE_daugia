@@ -4,11 +4,9 @@ const productModel = require("../services/models/product.model");
 const descriptionModel = require("../services/models/description.model");
 const userModal = require("../services/models/user.model");
 const desModel = require("../services/models/description.model");
-
 const multer = require("multer");
 const imageModel = require("../services/models/image.model");
 const upload = multer();
-
 const { v4: uuidv4 } = require("uuid");
 const { cloudinary } = require("../utils/cloudinary");
 const router = express.Router();
@@ -112,7 +110,6 @@ router.get("/", async (req, res) => {
 //GET Product by category
 router.get("/category/:id", async (req, res) => {
   const id = req.params.id;
-
   const data = await productModel.findAll();
   const getuser = await userModal.findAll();
   const getimage = await imageModel.findAll();
@@ -164,7 +161,6 @@ router.get("/category/:id", async (req, res) => {
 //GET Product by product
 router.get("/:id", async (req, res) => {
   const id = req.params.id;
-
   const data = await productModel.findAll();
   const getuser = await userModal.findAll();
   const getimage = await imageModel.findAll();
