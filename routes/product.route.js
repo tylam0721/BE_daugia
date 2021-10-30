@@ -283,6 +283,7 @@ router.post("/add-des", async (req, res) => {
   const description = {
     IdProduct: data.IdProduct,
     Note: data.Note,
+    DateCreated: new Date(),
   };
 
   const raw = await descriptionModel.add(description);
