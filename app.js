@@ -1,12 +1,11 @@
 const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
-
+const app = express();
 const auth = require("./middlewares/auth");
 
 require("express-async-errors");
 
-const app = express();
 
 app.use(cors());
 app.use(express.static("public/uploads"));
@@ -45,6 +44,10 @@ app.use(function (err, req, res, next) {
   });
 });
 
-app.listen(PORT, function () {
-  console.log(` at http://localhost:${PORT}`);
+/*app.listen(PORT, function () {
+  console.log(`App express at http://localhost:${PORT}`);
 });
+
+require('./ws');*/
+
+module.exports = app;
