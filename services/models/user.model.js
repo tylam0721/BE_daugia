@@ -53,6 +53,22 @@ module.exports = {
     return rows[0];
   },
 
+  async postRateGood(point, id){
+    const rows = await db(tableName).where("id", id).update("RateGood", point);
+    if (rows.length === 0) {
+      return null;
+    }
+    return rows[0]
+  },
+
+  async postRateBad(point, id){
+    const rows = await db(tableName).where("id", id).update("RateBad", point);
+    if (rows.length === 0) {
+      return null;
+    }
+    return rows[0]
+  },
+
   async findByMail(mail) {
     const rows = await db(tableName).where("Email", "like", `${mail}`);
     if (rows.length === 0) {

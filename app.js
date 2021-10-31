@@ -35,6 +35,8 @@ app.use("/api/product", require("./routes/product.route"));
 
 app.use("/api/admin", require("./routes/admin.route"));
 
+app.use("/api/action", require("./routes/action.route"));
+
 app.use(function (req, res, next) {
   res.status(404).json({
     message: "endpoint not found",

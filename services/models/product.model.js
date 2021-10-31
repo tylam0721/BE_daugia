@@ -8,6 +8,10 @@ module.exports = {
   findbyCategory(id) {
     return db(tableName).where("Isdeleted", 0).andWhere("IdCategory", id);
   },
+  findById(id){
+    return db(tableName).where("Isdeleted", 0).andWhere("id", id);
+  },
+
   add(product) {
     return db(tableName).insert(product);
   },
