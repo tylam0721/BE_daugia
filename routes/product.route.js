@@ -166,7 +166,7 @@ router.get("/:id", async (req, res) => {
   const getimage = await imageModel.findAll();
   const getdes = await desModel.findAll();
   product_found = [];
-  broadcastAll(id);
+
   data.map((r) => {
     image_found = [];
     user_buyer_found = [];
@@ -239,12 +239,11 @@ router.post("/add", async (req, res) => {
     DateUpdated: new Date(),
     Isdeleted: 0,
   };
-
   const raw = await productModel.add(product);
   if (raw[0] === 0) {
     return res.status(500).json("was row ecfect").end();
   }
-  //broadcastAll(product);
+  broadcastAll(JSON.stringify(["newProduct",product]));
   res.status(202).json({productId: raw[0]});
 });
 // UPDATE Product
