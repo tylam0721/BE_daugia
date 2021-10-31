@@ -33,8 +33,8 @@ const formatJson = (product, userbuyer, userSeller, images, des) => {
     DateCreated: product.DateUpdated,
     DateUpdated: product.DateUpdated,
     Isdeleted: product.Isdeleted,
-    UserSeller: userbuyer,
-    UserBuyer: userSeller,
+    UserSeller: userSeller,
+    UserBuyer:  userbuyer,
     images: images,
     des: des,
   };
