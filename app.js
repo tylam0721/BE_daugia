@@ -1,5 +1,4 @@
 let WSServer = require('ws').Server;
-const ws = require('ws');
 let server = require('http').createServer();
 const express = require("express");
 const morgan = require("morgan");
@@ -61,7 +60,6 @@ if(!wss)
       wss.on('connection', function connection(ws) {
        
         ws.on('message', function incoming(message) {
-          
           console.log(`received: ${message}`);
         });
       });
@@ -72,12 +70,9 @@ server.listen(PORT, function() {
 });
 
 global.broadcastAll = function (msg){
-  for( c of wss.clients){
-    if(c.readyState === ws.OPEN)
-    {
-      c.send(msg);
-    }
-  }
+  wss.clients.forEach(function each(client) {
+    client.send(msg);
+ });
 }
 
 /*app.listen(PORT, function () {
@@ -86,6 +81,4 @@ global.broadcastAll = function (msg){
 
 require('./ws');*/
 
-module.exports = {
-  app: app,
-}
+module.exports = app;
