@@ -1,5 +1,5 @@
 const db = require("../../utils/db");
-const tableName = "watchlist";
+const tableName = "watch_list";
 
 module.exports = {
     findAll() {
@@ -8,11 +8,11 @@ module.exports = {
     findbyCategory(id) {
         return db(tableName).where("Isdeleted", 0).andWhere("IdCategory", id);
     },
-    add(product) {
-        return db(tableName).insert(product);
+    add(object) {
+        return db(tableName).insert(object);
     },
-    update(product, id) {
-        return db(tableName).where("id", id).update(product);
+    update(object, id) {
+        return db(tableName).where("id", id).update(object);
     },
     delete(id) {
         return db(tableName).where("id", id).update("Isdeleted", 1);

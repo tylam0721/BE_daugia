@@ -25,6 +25,8 @@ app.use("/api/register", require("./routes/register.route"));
 
 app.use("/api/category", require("./routes/category.route"));
 
+app.use("/api/watchlist", require("./routes/watchList.route"));
+
 // app.use('/api/login', auth, require('./routes/login.route'));
 
 app.use("/api/otp", require("./routes/otp.route"));
