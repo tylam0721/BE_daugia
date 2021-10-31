@@ -243,7 +243,7 @@ router.post("/add", async (req, res) => {
   if (raw[0] === 0) {
     return res.status(500).json("was row ecfect").end();
   }
-  broadcastAll(JSON.stringify(product));
+  broadcastAll(JSON.stringify(["newProduct",product]));
   res.status(202).json({productId: raw[0]});
 });
 // UPDATE Product
