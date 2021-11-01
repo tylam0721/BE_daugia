@@ -225,6 +225,8 @@ router.get("/delete/:id", async (req, res) => {
 router.post("/add", async (req, res) => {
   const data = req.body;
 
+  console.log(data);
+
   const product = {
     IdCategory: data.IdCategory,
     IdUserSeller: data.IdUserSeller,
@@ -237,6 +239,7 @@ router.post("/add", async (req, res) => {
     IsCheckReturn: data.IsCheckReturn,
     DateCreated: new Date(),
     DateUpdated: new Date(),
+    DateEnd: data.DateEnd,
     Isdeleted: 0,
   };
   const raw = await productModel.add(product);
@@ -256,6 +259,7 @@ router.post("/update", async (req, res) => {
     StartingPrice: data.StartingPrice,
     StepPrice: data.StepPrice,
     NowPrice: data.NowPrice,
+    DateEnd: data.DateEnd,
     DateUpdated: new Date(),
   };
 
