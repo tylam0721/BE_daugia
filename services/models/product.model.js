@@ -11,6 +11,12 @@ module.exports = {
   findById(id){
     return db(tableName).where("Isdeleted", 0).andWhere("id", id);
   },
+  updatePrice(id, price, idbuyer){
+    return db(tableName).where("id", id).update({
+      NowPrice: price,
+      IdUserBuyer: idbuyer
+    });
+  },
 
   add(product) {
     return db(tableName).insert(product);
