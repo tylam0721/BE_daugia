@@ -35,6 +35,7 @@ const formatJson = (product, userbuyer, userSeller, images, des) => {
     Isdeleted: product.Isdeleted,
     UserSeller: userSeller,
     UserBuyer:  userbuyer,
+    DateEnd: product.DateEnd,
     images: images,
     des: des,
   };
