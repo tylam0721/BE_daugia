@@ -34,7 +34,7 @@ router.post('/create',validate(schema),async function(req,res){
             
             Email: req.body.Email,
             Password: password_hash,
-            Birthday: moment(req.body.Birthday, 'MM/DD/YYYY').format('YYYY-MM-DD'),
+            Birthday: moment(req.body.Birthday).format('YYYY-MM-DD'),
             Firstname: req.body.Firstname,
             Lastname: req.body.Lastname,
             RateGood: 0,
