@@ -57,7 +57,7 @@ router.post('/confirm',validate(schemaConfirm), async function(req,res){
     {
         return res.status(204).json({message: "User email not found"});
     }
-    user.isOTP = 1;
+    user.IsOTP = 1;
     const id = user.id;
     delete(user.id);
     await user.patch(id,user);
