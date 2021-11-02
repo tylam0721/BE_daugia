@@ -15,21 +15,12 @@ router.get("/", async (req, res) => {
 router.get("/delete/:id", async (req, res) => {
   const data = req.params.id;
 
-  const checkExist = await productModel.findbyCategory(data);
-
-  if (checkExist != 0) {
-    return res
-      .status(500)
-      .json({ message: "Cannot delete Category because is exist product" })
-      .end();
-  }
-
-  const row = await categoryModel.delete(data);
+  const row = await watchlistModel.delete(data);
   if (row === 0) {
     return res.status(500).json("was row ecfect").end();
   }
   return res.status(202).json({
-    message: "add category successfully",
+    message: "delete product from watchlist successfully",
   });
 });
 

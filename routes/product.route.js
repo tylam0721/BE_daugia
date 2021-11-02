@@ -83,7 +83,7 @@ const formatJsonUser = (user) => {
 const formatJsonWatchList=(watch_list)=>{
   return {
     watchlistid: watch_list.id,
-    isWatchList: watch_list.Isdeleted,
+    Isdeleted: watch_list.Isdeleted,
     IdUserWatch: watch_list.IdUser,
   }
 }
@@ -256,10 +256,10 @@ router.get("/:id", async (req, res) => {
 });
 
 // DELETE product
-router.get("/delete/:id", async (req, res) => {
-  const data = req.params.id;
+router.post("/delete", async (req, res) => {
+  const data = req.body;
 
-  const row = await productModel.delete(data);
+  const row = await productModel.deleteWithUserAndProductId(data);
   if (row === 0) {
     return res.status(500).json("was row ecfect").end();
   }

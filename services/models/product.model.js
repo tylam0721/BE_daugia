@@ -27,4 +27,7 @@ module.exports = {
   delete(id) {
     return db(tableName).where("id", id).update("Isdeleted", 1);
   },
+  deleteWithUserAndProductId(entity){
+    return db(tableName).where("IdUser", entity.IdUser).andWhere("IdProduct",entity.IdProduct).update("Isdeleted", 1);
+  }
 };
