@@ -3,7 +3,7 @@ const tableName = "watch_list";
 
 module.exports = {
     findAll() {
-        return db(tableName).where("Isdeleted", 0);
+        return db(tableName);
     },
     findbyCategory(id) {
         return db(tableName).where("Isdeleted", 0).andWhere("IdCategory", id);
