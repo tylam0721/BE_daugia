@@ -6,37 +6,36 @@ const productMode = require("../services/models/product.model");
 const router = express.Router();
 
 router.post("/rategood", async (req, res) => {
-    const id = req.body.idUser;
-    const data = await userModel.findById(id);
-    var good = data.RateGood + 1;
+  const id = req.body.idUser;
+  const data = await userModel.findById(id);
+  var good = data.RateGood + 1;
 
-    const raw = await userModel.postRateGood(good, id);
+  const raw = await userModel.postRateGood(good, id);
 
-    if (raw === 0 && raw == null) {
-        return res.status(500).json("was row ecfect").end();
-      }
+  if (raw === 0 && raw == null) {
+    return res.status(500).json("was row ecfect").end();
+  }
 
-    return res.status(202).json({ message: "Bạn đã đánh giá good" });
+  return res.status(202).json({ message: "Bạn đã đánh giá good" });
 });
 
 router.post("/ratebad", async (req, res) => {
-    const id = req.body.idUser;
-    const data = await userModel.findById(id);
-    var bad = data.RateBad + 1;
+  const id = req.body.idUser;
+  const data = await userModel.findById(id);
+  var bad = data.RateBad + 1;
 
-    const raw = await userModel.postRateBad(bad, id);
+  const raw = await userModel.postRateBad(bad, id);
 
-    if (raw === 0 && raw == null) {
-        return res.status(500).json("was row ecfect").end();
-      }
+  if (raw === 0 && raw == null) {
+    return res.status(500).json("was row ecfect").end();
+  }
 
-    return res.status(202).json({ message: "Bạn đã đánh giá bad" });
+  return res.status(202).json({ message: "Bạn đã đánh giá bad" });
 });
-
 
 router.get("/", async (req, res) => {
   const data = await userModel.findByBidder();
-  if (data === 0) { 
+  if (data === 0) {
     return res.status(500).json("was row ecfect").end();
   }
 
@@ -45,59 +44,78 @@ router.get("/", async (req, res) => {
 
 router.post("/check", async (req, res) => {
   const id = req.body.idUser;
+  const productId = req.body.idProduct;
   const check = await userModel.findById(id);
+  const checkProd = await productMode.findById(productId);
 
-  if (check.RateGood == 0 && check.RateBad ==0){
-
-    // gửi yêu cầu đến người bán hàng cho phép đâu giá sản phẩm trường hợp chưa có lượt đấu giá
-
-    return res.status(201).json({
-        message: "Người dùng chưa từng ra giá sản phẩm"
-    }).end();
+  if (check.RateGood == 0 && check.RateBad == 0) {
+    console.log(checkProd.allowUnrated);
+    if (checkProd.allowUnrated == 1) {
+      return res
+        .status(202)
+        .json({
+          message: "Cho phép người dùng chưa từng ra giá tham gia",
+          check
+        })
+        .end();
+    } 
+    return res
+    .status(201)
+    .json({
+      message: "Người dùng chưa từng ra giá sản phẩm",
+      check,
+      checkProd
+    })
+    .end();
   }
 
-    if((check.RateGood /(check.RateBad + check.RateGood)) >= 0.8){
-        return res.status(202).json({
-            message: "Người dùng đủ điều kiện ra giá sản phẩm"
-        }).end();
-    }
+  if (check.RateGood / (check.RateBad + check.RateGood) >= 0.8) {
+    return res
+      .status(202)
+      .json({
+        message: "Người dùng đủ điều kiện ra giá sản phẩm",
+      })
+      .end();
+  }
   res.status(500).json({
     message: "Người dùng không đủ điều kiện",
   });
 });
 
 router.post("/buys", async (req, res) => {
+  const data = req.body;
 
-    const data = req.body;
+  const checkPriceProduct = await productMode.findById(data.IdProduct);
 
-    const checkPriceProduct = await productMode.findById(data.IdProduct);
+  const nowdate = new Date();
 
-    const nowdate = new Date();
+  if (
+    data.Price >
+      checkPriceProduct[0].NowPrice + checkPriceProduct[0].StepPrice &&
+    checkPriceProduct[0].DateEnd > nowdate
+  ) {
+    const auction = {
+      IdProduct: data.IdProduct,
+      Price: data.Price,
+      IdUser: data.IdUser,
+      DateStart: new Date(),
+      DateEnd: new Date(),
+      Isdeleted: 0,
+      DateCreated: new Date(),
+      DateUpdated: new Date(),
+    };
 
-    if((data.Price > (checkPriceProduct[0].NowPrice +  checkPriceProduct[0].StepPrice)) 
-    && (checkPriceProduct[0].DateEnd > nowdate)){
-        const auction = {
-            IdProduct: data.IdProduct,
-            Price: data.Price,
-            IdUser: data.IdUser,
-            DateStart: new Date(),
-            DateEnd: new Date(),
-            Isdeleted: 0,
-            DateCreated: new Date(),
-            DateUpdated: new Date()
-        }
-    
-        const raw = await actionModel.add(auction);
-        broadcastAll(["updateAunction",auction])
-        if (raw === 0 || raw == null) { 
-          return res.status(500).json("was row ecfect").end();
-        }
-        
-        await productMode.updatePrice(data.IdProduct, data.Price, data.IdUser);
-
-        return res.status(202).json({ raw });
+    const raw = await actionModel.add(auction);
+    broadcastAll(["updateAunction", auction]);
+    if (raw === 0 || raw == null) {
+      return res.status(500).json("was row ecfect").end();
     }
-    return res.status(500).json({ message: "Bạn đấu giá không thành công" });
-  });
+
+    await productMode.updatePrice(data.IdProduct, data.Price, data.IdUser);
+
+    return res.status(202).json({ raw });
+  }
+  return res.status(500).json({ message: "Bạn đấu giá không thành công" });
+});
 
 module.exports = router;

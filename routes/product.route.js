@@ -287,6 +287,7 @@ router.post("/add", async (req, res) => {
     DateUpdated: new Date(),
     DateEnd: data.DateEnd,
     Isdeleted: 0,
+    allowUnrated: data.allowUnrated
   };
   const raw = await productModel.add(product);
   if (raw[0] === 0) {
