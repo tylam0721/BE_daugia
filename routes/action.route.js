@@ -88,7 +88,7 @@ router.post("/buys", async (req, res) => {
         }
     
         const raw = await actionModel.add(auction);
-    
+        broadcastAll(["updateAunction",auction])
         if (raw === 0 || raw == null) { 
           return res.status(500).json("was row ecfect").end();
         }
