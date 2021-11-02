@@ -30,7 +30,7 @@ router.post('/',validate(schema),async function(req,res){
             authenticated: false
         });
     }
-    if(user.isOTP === 0 || user.isOTP === null)
+    if(user.IsOTP === 0 || user.IsOTP === null)
     {
         return res.status(401).json({
             authenticated: false

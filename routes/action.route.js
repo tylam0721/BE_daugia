@@ -72,16 +72,7 @@ router.post("/buys", async (req, res) => {
 
     const checkPriceProduct = await productMode.findById(data.IdProduct);
 
-    console.log(checkPriceProduct);
     const nowdate = new Date();
-
-    console.log(data.Price);
-    console.log(checkPriceProduct[0].NowPrice);
-    console.log(checkPriceProduct[0].StepPrice);
-    console.log(nowdate);
-    console.log(checkPriceProduct[0].DateEnd);
-
-
 
     if((data.Price > (checkPriceProduct[0].NowPrice +  checkPriceProduct[0].StepPrice)) 
     && (checkPriceProduct[0].DateEnd > nowdate)){
@@ -97,11 +88,13 @@ router.post("/buys", async (req, res) => {
         }
     
         const raw = await actionModel.add(auction);
-    
+        broadcastAll(["updateAunction",auction])
         if (raw === 0 || raw == null) { 
           return res.status(500).json("was row ecfect").end();
         }
-      
+        
+        await productMode.updatePrice(data.IdProduct, data.Price, data.IdUser);
+
         return res.status(202).json({ raw });
     }
     return res.status(500).json({ message: "Bạn đấu giá không thành công" });
