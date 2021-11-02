@@ -3,6 +3,9 @@ const express = require("express");
 const userModel = require("../services/models/user.model");
 const actionModel = require("../services/models/action.model");
 const productMode = require("../services/models/product.model");
+const desModel = require("../services/models/description.model");
+const imageModel = require("../services/models/image.model");
+const watchlistModel=require("../services/models/watchList.model");
 const router = express.Router();
 
 router.post("/rategood", async (req, res) => {
@@ -49,22 +52,18 @@ router.post("/check", async (req, res) => {
   const checkProd = await productMode.findById(productId);
 
   if (check.RateGood == 0 && check.RateBad == 0) {
-    console.log(checkProd.allowUnrated);
-    if (checkProd.allowUnrated == 1) {
+    if (checkProd[0].allowUnrated == 1) {
       return res
         .status(202)
         .json({
           message: "Cho phép người dùng chưa từng ra giá tham gia",
-          check
         })
         .end();
     } 
     return res
     .status(201)
     .json({
-      message: "Người dùng chưa từng ra giá sản phẩm",
-      check,
-      checkProd
+      message: "Không cho phép người dùng chưa từng ra giá sản phẩm",
     })
     .end();
   }
@@ -88,11 +87,10 @@ router.post("/buys", async (req, res) => {
   const checkPriceProduct = await productMode.findById(data.IdProduct);
 
   const nowdate = new Date();
-
   if (
-    data.Price >
-      checkPriceProduct[0].NowPrice + checkPriceProduct[0].StepPrice &&
-    checkPriceProduct[0].DateEnd > nowdate
+    (data.Price >
+      checkPriceProduct[0].NowPrice + checkPriceProduct[0].StepPrice) &&
+    (checkPriceProduct[0].DateEnd > nowdate)
   ) {
     const auction = {
       IdProduct: data.IdProduct,
@@ -106,16 +104,157 @@ router.post("/buys", async (req, res) => {
     };
 
     const raw = await actionModel.add(auction);
-    broadcastAll(["updateAunction", auction]);
+
     if (raw === 0 || raw == null) {
       return res.status(500).json("was row ecfect").end();
     }
 
     await productMode.updatePrice(data.IdProduct, data.Price, data.IdUser);
+    const sendData = await getBiddersList(data.IdProduct);
+    broadcastAll(JSON.stringify(["updateProductDetail",sendData]));
+
 
     return res.status(202).json({ raw });
   }
   return res.status(500).json({ message: "Bạn đấu giá không thành công" });
 });
 
+const formatJson = (product, userbuyer, userSeller, images, des, watch_list) => {
+  return {
+    id: product.id,
+    IdCategory: product.IdCategory,
+    IdUserBuyer: product.IdUserBuyer,
+    IdUserSeller: product.IdUserSeller,
+    Name: product.Name,
+    StartingPrice: product.StartingPrice,
+    StepPrice: product.StepPrice,
+    NowPrice: product.NowPrice,
+    Description: product.Description,
+    IsUpdatedDescription: product.IsUpdatedDescription,
+    IsCheckReturn: product.IsCheckReturn,
+    DateCreated: product.DateUpdated,
+    DateUpdated: product.DateUpdated,
+    Isdeleted: product.Isdeleted,
+    UserSeller: userSeller,
+    UserBuyer:  userbuyer,
+    DateEnd: product.DateEnd,
+    images: images,
+    des: des,
+    watch_list,
+  };
+};
+
+const formatJsonImage = (image_product) => {
+  return {
+    id: image_product.id,
+    Name: image_product.Name,
+    IdProduct: image_product.IdProduct,
+  };
+};
+
+const formatJsonDes = (des_product) => {
+  return {
+    Note: des_product.Note,
+    IdProduct: des_product.IdProduct,
+  };
+};
+
+const formatJsonBuyer = (buyer)=>{
+  return {
+    id: buyer.id,
+    DateStart: buyer.DateStart,
+    Lastname: buyer.Lastname,
+    Price: buyer.Price,
+  };
+}
+
+const formatJsonUser = (user) => {
+  return {
+    Firstname: user.Firstname,
+    Lastname: user.Lastname,
+    RateGood: user.RateGood,
+    RateBad: user.RateBad,
+    Email: user.Email,
+  };
+};
+
+const formatJsonWatchList=(watch_list)=>{
+  return {
+    watchlistid: watch_list.id,
+    Isdeleted: watch_list.Isdeleted,
+    IdUserWatch: watch_list.IdUser,
+  }
+}
+const getBiddersList = async function(id){
+  const data = await productMode.findAll();
+  const getuser = await userModel.findAll();
+  const getaction = await actionModel.findAll();
+  const getimage = await imageModel.findAll();
+  const getdes = await desModel.findAll();
+  const getwatchlist=await watchlistModel.findAll();
+
+  product_found = [];
+
+  data.map((r) => {
+    image_found = [];
+    user_buyer_found = [];
+    user_seller_found = [];
+    watch_list_found=[];
+    des_found = [];
+    if (r.id == id) {
+      getimage.map((i) => {
+        if (i.IdProduct == r.id) {
+          image_found.push(formatJsonImage(i));
+        }
+      });
+      getaction.map((b) => {
+        if (b.IdProduct == r.id) {
+          getuser.map((u)=>{
+            if(u.id == b.IdUser)
+            {
+              user_buyer_found.push(formatJsonBuyer({
+                id: u.id,
+                Lastname: u.Lastname,
+                DateStart: b.DateStart,
+                Price: b.Price
+              }));
+            }
+          })
+        }
+      });
+      getuser.map((u)=>{
+        if (u.id == r.IdUserSeller) {
+          user_seller_found.push(formatJsonUser(u));
+        }
+      });
+      getdes.map((d) => {
+        if (d.IdProduct == r.id) {
+          des_found.push(formatJsonDes(d));
+        }
+      });
+      getwatchlist.map((w) => {
+        if(w.IdProduct == r.id){
+          watch_list_found.push(formatJsonWatchList(w))
+        }
+      });
+      product_found.push(
+        formatJson(
+          r,
+          user_buyer_found,
+          user_seller_found,
+          image_found,
+          des_found,
+          watch_list_found,
+        )
+      );
+    }
+  });
+
+  if (data === 0) {
+    return {}
+  }
+  return product_found;
+}
+
 module.exports = router;
+
