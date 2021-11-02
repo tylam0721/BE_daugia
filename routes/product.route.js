@@ -9,6 +9,8 @@ const upload = multer();
 const { v4: uuidv4 } = require("uuid");
 const { cloudinary } = require("../utils/cloudinary");
 const router = express.Router();
+const watchlistModel=require("../services/models/watchList.model");
+const { watch } = require("fs");
 
 
 var image_found = [];
@@ -16,8 +18,9 @@ var user_seller_found = [];
 var user_buyer_found = [];
 var des_found = [];
 var product_found = [];
+var watch_list_found=[];
 
-const formatJson = (product, userbuyer, userSeller, images, des) => {
+const formatJson = (product, userbuyer, userSeller, images, des, watch_list) => {
   return {
     id: product.id,
     IdCategory: product.IdCategory,
@@ -37,6 +40,7 @@ const formatJson = (product, userbuyer, userSeller, images, des) => {
     UserBuyer:  userbuyer,
     images: images,
     des: des,
+    watch_list,
   };
 };
 
@@ -65,6 +69,14 @@ const formatJsonUser = (user) => {
   };
 };
 
+const formatJsonWatchList=(watch_list)=>{
+  return {
+    watchlistid: watch_list.id,
+    isWatchList: watch_list.Isdeleted,
+    IdUserWatch: watch_list.IdUser,
+  }
+}
+
 // GET ALL
 router.get("/", async (req, res) => {
   const data = await productModel.findAll();
@@ -78,6 +90,7 @@ router.get("/", async (req, res) => {
     user_buyer_found = [];
     user_seller_found = [];
     des_found = [];
+
     getimage.map((i) => {
       if (i.IdProduct == r.id) {
         image_found.push(formatJsonImage(i));
@@ -165,12 +178,15 @@ router.get("/:id", async (req, res) => {
   const getuser = await userModal.findAll();
   const getimage = await imageModel.findAll();
   const getdes = await desModel.findAll();
+  const getwatchlist=await watchlistModel.findAll();
+
   product_found = [];
 
   data.map((r) => {
     image_found = [];
     user_buyer_found = [];
     user_seller_found = [];
+    watch_list_found=[];
     des_found = [];
     if (r.id == id) {
       getimage.map((i) => {
@@ -191,13 +207,19 @@ router.get("/:id", async (req, res) => {
           des_found.push(formatJsonDes(d));
         }
       });
+      getwatchlist.map((w) => {
+        if(w.IdProduct == r.id){
+          watch_list_found.push(formatJsonWatchList(w))
+        }
+      });
       product_found.push(
         formatJson(
           r,
           user_buyer_found,
           user_seller_found,
           image_found,
-          des_found
+          des_found,
+          watch_list_found,
         )
       );
     }
@@ -357,5 +379,21 @@ router.post("/UpdateImage/:id", upload.any(), async (req, res) => {
 
   return res.status(202).json("Upload image successfully");
 });
+
+router.post("/addToWatchList", upload.any(), async (req, res) => {
+  const data = {
+    IdProduct: req.body.IdProduct,
+    IdUser: req.body.IdUser,
+    Isdeleted: 0
+  };
+  const raw = await watchlistModel.add(data);
+  if (raw === 0) {
+    return res.status(500).json("was row ecfect").end();
+  }
+  res.status(202).json({
+    message: "add successfully",
+  });
+});
+
 
 module.exports = router;
