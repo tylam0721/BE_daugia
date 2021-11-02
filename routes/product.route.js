@@ -2,6 +2,7 @@ const express = require("express");
 const productModel = require("../services/models/product.model");
 const descriptionModel = require("../services/models/description.model");
 const userModal = require("../services/models/user.model");
+const actionModel = require("../services/models/action.model");
 const desModel = require("../services/models/description.model");
 const multer = require("multer");
 const imageModel = require("../services/models/image.model");
@@ -55,6 +56,15 @@ const formatJsonDes = (des_product) => {
     IdProduct: des_product.IdProduct,
   };
 };
+
+const formatJsonBuyer = (buyer)=>{
+  return {
+    id: buyer.id,
+    DateStart: buyer.DateStart,
+    Lastname: buyer.Lastname,
+    Price: buyer.Price,
+  };
+}
 
 const formatJsonUser = (user) => {
   return {
@@ -164,6 +174,7 @@ router.get("/:id", async (req, res) => {
   const id = req.params.id;
   const data = await productModel.findAll();
   const getuser = await userModal.findAll();
+  const getaction = await actionModel.findAll();
   const getimage = await imageModel.findAll();
   const getdes = await desModel.findAll();
   product_found = [];
@@ -179,10 +190,22 @@ router.get("/:id", async (req, res) => {
           image_found.push(formatJsonImage(i));
         }
       });
-      getuser.map((u) => {
-        if (u.id == r.IdUserBuyer) {
-          user_buyer_found.push(formatJsonUser(u));
+      getaction.map((b) => {
+        if (b.IdProduct == r.id) {
+          getuser.map((u)=>{
+            if(u.id == b.IdUser)
+            {
+              user_buyer_found.push(formatJsonBuyer({
+                id: u.id,
+                Lastname: u.Lastname,
+                DateStart: b.DateStart,
+                Price: b.Price
+              }));
+            }
+          })
         }
+      });
+      getuser.map((u)=>{
         if (u.id == r.IdUserSeller) {
           user_seller_found.push(formatJsonUser(u));
         }
