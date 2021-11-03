@@ -240,7 +240,7 @@ const getBiddersList = async function(id){
       product_found.push(
         formatJson(
           r,
-          user_buyer_found,
+          user_buyer_found.sort((a, b) => Number(b.Price) - Number(a.Price)),
           user_seller_found,
           image_found,
           des_found,

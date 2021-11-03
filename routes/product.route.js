@@ -94,6 +94,7 @@ router.get("/", async (req, res) => {
   const getuser = await userModal.findAll();
   const getimage = await imageModel.findAll();
   const getdes = await desModel.findAll();
+  const getaction = await actionModel.findAll();
   product_found = [];
 
   data.map((r) => {
@@ -107,10 +108,22 @@ router.get("/", async (req, res) => {
         image_found.push(formatJsonImage(i));
       }
     });
-    getuser.map((u) => {
-      if (u.id == r.IdUserBuyer) {
-        user_buyer_found.push(formatJsonUser(u));
+    getaction.map((b) => {
+      if (b.IdProduct == r.id) {
+        getuser.map((u)=>{
+          if(u.id == b.IdUser)
+          {
+            user_buyer_found.push(formatJsonBuyer({
+              id: u.id,
+              Lastname: u.Lastname,
+              DateStart: b.DateStart,
+              Price: b.Price
+            }));
+          }
+        })
       }
+    });
+    getuser.map((u) => {
       if (u.id == r.IdUserSeller) {
         user_seller_found.push(formatJsonUser(u));
       }
@@ -121,7 +134,7 @@ router.get("/", async (req, res) => {
       }
     });
     product_found.push(
-      formatJson(r, user_buyer_found, user_seller_found, image_found, des_found)
+      formatJson(r, user_buyer_found.sort((a, b) => Number(b.Price) - Number(a.Price)), user_seller_found, image_found, des_found)
     );
   });
 
@@ -138,6 +151,7 @@ router.get("/category/:id", async (req, res) => {
   const getuser = await userModal.findAll();
   const getimage = await imageModel.findAll();
   const getdes = await desModel.findAll();
+  const getaction = await actionModel.findAll();
   product_found = [];
 
   data.map((r) => {
@@ -151,10 +165,22 @@ router.get("/category/:id", async (req, res) => {
           image_found.push(formatJsonImage(i));
         }
       });
-      getuser.map((u) => {
-        if (u.id == r.IdUserBuyer) {
-          user_buyer_found.push(formatJsonUser(u));
+      getaction.map((b) => {
+        if (b.IdProduct == r.id) {
+          getuser.map((u)=>{
+            if(u.id == b.IdUser)
+            {
+              user_buyer_found.push(formatJsonBuyer({
+                id: u.id,
+                Lastname: u.Lastname,
+                DateStart: b.DateStart,
+                Price: b.Price
+              }));
+            }
+          })
         }
+      });
+      getuser.map((u) => {
         if (u.id == r.IdUserSeller) {
           user_seller_found.push(formatJsonUser(u));
         }
@@ -167,7 +193,7 @@ router.get("/category/:id", async (req, res) => {
       product_found.push(
         formatJson(
           r,
-          user_buyer_found,
+          user_buyer_found.sort((a, b) => Number(b.Price) - Number(a.Price)),
           user_seller_found,
           image_found,
           des_found
