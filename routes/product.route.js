@@ -280,7 +280,7 @@ router.post("/add", async (req, res) => {
     Name: data.Name,
     StartingPrice: data.StartingPrice,
     StepPrice: data.StepPrice,
-    NowPrice: data.NowPrice,
+    NowPrice: data.StartingPrice,
     Description: data.Description,
     IsUpdatedDescription: 0,
     IsCheckReturn: data.IsCheckReturn,
