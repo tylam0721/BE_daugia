@@ -88,7 +88,7 @@ router.post("/buys", async (req, res) => {
 
   const nowdate = new Date();
   if (
-    (data.Price >
+    (data.Price >=
       checkPriceProduct[0].NowPrice + checkPriceProduct[0].StepPrice) &&
     (checkPriceProduct[0].DateEnd > nowdate)
   ) {
