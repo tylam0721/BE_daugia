@@ -88,6 +88,14 @@ module.exports = {
   downto(id, data) {
     return db(tableName).where("id", id).update(data);
   },
+  
+  requestUptoSeller(id) {
+    return db(tableName).where("id", id).update("IsRequesSeller", 1);
+  },
+
+  reserReques(id) {
+    return db(tableName).where("id", id).update("IsRequesSeller", 0);
+  },
 
   del(id) {
     return db(tableName).where("Id", id).del();
