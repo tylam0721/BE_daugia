@@ -107,20 +107,20 @@ router.put('/update-password/:id', async function(req,res){
     const oldPassword = req.body.OldPassword;
 
     if (!userId || !newPassword || !oldPassword) {
-        return res.json({message: "400 Bad request"}).status(400).end();
+        return res.status(400).json({message: "400 Bad request"}).end();
     }
 
     var user = await userModel.findById(userId);
     if (!await bcrypt.compare(oldPassword, user.Password)) {
-        return res.json({message: "Password's not correct"}).status(400).end();
+        return res.status(400).json({message: "Password's not correct"}).end();
     }
 
     var newHashPassword = bcrypt.hashSync(newPassword, config.authentication.saltRounds);
     const rows = await userModel.updatePassword(userId, newHashPassword);
     if (!rows) {
-        return res.json({message: "Something went wrong"}).status(404).end();
+        return res.status(404).json({message: "Something went wrong"}).end();
     }
-    res.json({"message": "Password update successfully!"}).status(200).end();
+    res.status(200).json({"message": "Password update successfully!"}).end();
 })
 
 router.put('/info/update', validate(update_user_info_schema), async function(req,res){

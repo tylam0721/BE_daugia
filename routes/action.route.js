@@ -88,7 +88,7 @@ router.post("/buys", async (req, res) => {
 
   const nowdate = new Date();
   if (
-    (data.Price >
+    (data.Price >=
       checkPriceProduct[0].NowPrice + checkPriceProduct[0].StepPrice) &&
     (checkPriceProduct[0].DateEnd > nowdate)
   ) {
@@ -240,7 +240,7 @@ const getBiddersList = async function(id){
       product_found.push(
         formatJson(
           r,
-          user_buyer_found,
+          user_buyer_found.sort((a, b) => Number(b.Price) - Number(a.Price)),
           user_seller_found,
           image_found,
           des_found,
