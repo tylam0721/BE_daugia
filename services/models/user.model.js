@@ -11,7 +11,7 @@ module.exports = {
     return db(tableName)
       .join("role", "user.Scope", "=", "role.id")
       .where("user.Isdeleted", 0)
-      .andWhere("user.Scope", 5).select('user.id', 
+      .andWhere("user.IsRequesSeller", 1).select('user.id', 
       'user.Email', 
       'user.Adress',
       'user.Birthday',
