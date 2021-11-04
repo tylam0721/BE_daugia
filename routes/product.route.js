@@ -10,8 +10,10 @@ const upload = multer();
 const { v4: uuidv4 } = require("uuid");
 const { cloudinary } = require("../utils/cloudinary");
 const router = express.Router();
-const watchlistModel=require("../services/models/watchList.model");
+const watchlistModel = require("../services/models/watchList.model");
 const { watch } = require("fs");
+const cron = require("node-cron");
+const mailer = require('../utils/mailer');
 
 
 var image_found = [];
@@ -19,7 +21,7 @@ var user_seller_found = [];
 var user_buyer_found = [];
 var des_found = [];
 var product_found = [];
-var watch_list_found=[];
+var watch_list_found = [];
 
 const formatJson = (product, userbuyer, userSeller, images, des, watch_list) => {
   return {
@@ -38,7 +40,7 @@ const formatJson = (product, userbuyer, userSeller, images, des, watch_list) => 
     DateUpdated: product.DateUpdated,
     Isdeleted: product.Isdeleted,
     UserSeller: userSeller,
-    UserBuyer:  userbuyer,
+    UserBuyer: userbuyer,
     DateEnd: product.DateEnd,
     images: images,
     des: des,
@@ -61,7 +63,7 @@ const formatJsonDes = (des_product) => {
   };
 };
 
-const formatJsonBuyer = (buyer)=>{
+const formatJsonBuyer = (buyer) => {
   return {
     id: buyer.id,
     DateStart: buyer.DateStart,
@@ -80,7 +82,7 @@ const formatJsonUser = (user) => {
   };
 };
 
-const formatJsonWatchList=(watch_list)=>{
+const formatJsonWatchList = (watch_list) => {
   return {
     watchlistid: watch_list.id,
     Isdeleted: watch_list.Isdeleted,
@@ -190,7 +192,7 @@ router.get("/:id", async (req, res) => {
   const getaction = await actionModel.findAll();
   const getimage = await imageModel.findAll();
   const getdes = await desModel.findAll();
-  const getwatchlist=await watchlistModel.findAll();
+  const getwatchlist = await watchlistModel.findAll();
 
   product_found = [];
 
@@ -198,7 +200,7 @@ router.get("/:id", async (req, res) => {
     image_found = [];
     user_buyer_found = [];
     user_seller_found = [];
-    watch_list_found=[];
+    watch_list_found = [];
     des_found = [];
     if (r.id == id) {
       getimage.map((i) => {
@@ -208,9 +210,8 @@ router.get("/:id", async (req, res) => {
       });
       getaction.map((b) => {
         if (b.IdProduct == r.id) {
-          getuser.map((u)=>{
-            if(u.id == b.IdUser)
-            {
+          getuser.map((u) => {
+            if (u.id == b.IdUser) {
               user_buyer_found.push(formatJsonBuyer({
                 id: u.id,
                 Lastname: u.Lastname,
@@ -221,7 +222,7 @@ router.get("/:id", async (req, res) => {
           })
         }
       });
-      getuser.map((u)=>{
+      getuser.map((u) => {
         if (u.id == r.IdUserSeller) {
           user_seller_found.push(formatJsonUser(u));
         }
@@ -232,7 +233,7 @@ router.get("/:id", async (req, res) => {
         }
       });
       getwatchlist.map((w) => {
-        if(w.IdProduct == r.id){
+        if (w.IdProduct == r.id) {
           watch_list_found.push(formatJsonWatchList(w))
         }
       });
@@ -293,8 +294,8 @@ router.post("/add", async (req, res) => {
   if (raw[0] === 0) {
     return res.status(500).json("was row ecfect").end();
   }
-  broadcastAll(JSON.stringify(["newProduct",product]));
-  res.status(202).json({productId: raw[0]});
+  broadcastAll(JSON.stringify(["newProduct", product]));
+  res.status(202).json({ productId: raw[0] });
 });
 // UPDATE Product
 router.post("/update", async (req, res) => {
@@ -408,21 +409,5 @@ router.post("/UpdateImage/:id", upload.any(), async (req, res) => {
 
   return res.status(202).json("Upload image successfully");
 });
-
-router.post("/addToWatchList", upload.any(), async (req, res) => {
-  const data = {
-    IdProduct: req.body.IdProduct,
-    IdUser: req.body.IdUser,
-    Isdeleted: 0
-  };
-  const raw = await watchlistModel.add(data);
-  if (raw === 0) {
-    return res.status(500).json("was row ecfect").end();
-  }
-  res.status(202).json({
-    message: "add successfully",
-  });
-});
-
 
 module.exports = router;

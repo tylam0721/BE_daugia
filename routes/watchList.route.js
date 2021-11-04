@@ -12,8 +12,12 @@ router.get("/", async (req, res) => {
   return res.status(202).json({ data });
 });
 
-router.get("/delete/:id", async (req, res) => {
-  const data = req.params.id;
+router.post("/delete", async (req, res) => {
+  const data = {
+    IdProduct: req.body.IdProduct,
+    IdUser: req.body.IdUser,
+    Isdeleted: 0
+  };
 
   const row = await watchlistModel.delete(data);
   if (row === 0) {
