@@ -6,6 +6,7 @@ const productMode = require("../services/models/product.model");
 const desModel = require("../services/models/description.model");
 const imageModel = require("../services/models/image.model");
 const watchlistModel=require("../services/models/watchList.model");
+const rejectedModel = require("../services/models/rejected.model");
 const router = express.Router();
 
 router.post("/rategood", async (req, res) => {
@@ -50,6 +51,14 @@ router.post("/check", async (req, res) => {
   const productId = req.body.idProduct;
   const check = await userModel.findById(id);
   const checkProd = await productMode.findById(productId);
+  const rejectedCheck = await rejectedModel.findByUserId(id);
+
+  if(rejectedCheck.length > 0)
+  {
+    res.status(500).json({
+      message: "Người dùng không đủ điều kiện",
+    }).end();
+  }
 
   if (check.RateGood == 0 && check.RateBad == 0) {
     if (checkProd[0].allowUnrated == 1) {
