@@ -14,4 +14,9 @@ module.exports = {
   update(id, data) {
     return db(tableName).where("id", id).update(data);
   },
+  findByIdGroupBy(id,columnName)
+  {
+    return db(tableName).where("IdProduct", id).andWhere("Isdeleted",0).groupBy("IdUser");
+
+  }
 };
