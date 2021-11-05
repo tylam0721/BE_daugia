@@ -140,13 +140,25 @@ router.put('/info/update', validate(update_user_info_schema), async function(req
     }
     await userModel.update(userData);
     return res.json({message: "User info updated"}).status(200).end();
-})
+});
+
+router.post('/request/upto-seller/:id', async function(req, res){
+    const id = req.params.id;
+
+    const raw = await userModel.requestUptoSeller(id);
+
+    if(raw === 0){
+        return res.status(400).json({message: "gửi yêu cầu thất bại"});
+    }
+
+    return res.status(202).json({raw});
+});
 
 router.get('/profile/:userId',async function(req,res){
     const user = await userModel.findById(req.params.userId);
 
     return res.json(user).status(200).end();
-})
+});
 router.use('/auth/facebook', require('./social/facebook'));
 
 module.exports = router;
