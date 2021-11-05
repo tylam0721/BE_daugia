@@ -74,6 +74,7 @@ const formatJsonBuyer = (buyer)=>{
 
 const formatJsonUser = (user) => {
   return {
+    id: user.id,
     Firstname: user.Firstname,
     Lastname: user.Lastname,
     RateGood: user.RateGood,
@@ -277,7 +278,7 @@ router.get("/:id", async (req, res) => {
           }
         })
         
-      })
+      });
 
       product_found.push(
         formatJson(
