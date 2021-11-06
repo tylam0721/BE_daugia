@@ -1,3 +1,4 @@
+const { default: knex } = require("knex");
 const db = require("../../utils/db");
 const tableName = "product";
 
@@ -29,5 +30,10 @@ module.exports = {
   },
   deleteWithUserAndProductId(entity){
     return db(tableName).where("IdUser", entity.IdUser).andWhere("IdProduct",entity.IdProduct).update("Isdeleted", 1);
+  },
+  getAuctioned() {
+    return db(tableName).where("Isdeleted", 0).whereExists(function() {
+      this.select('*').from('auction').whereRaw('auction.IdProduct = product.id');
+    })
   }
 };

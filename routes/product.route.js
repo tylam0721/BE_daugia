@@ -455,4 +455,10 @@ router.post("/UpdateImage/:id", upload.any(), async (req, res) => {
   return res.status(202).json("Upload image successfully");
 });
 
+
+router.post("/auctioned", async (req, res) => {
+  const data = await productModel.getAuctioned();
+  return res.status(202).json({data: data});
+})
+
 module.exports = router;
