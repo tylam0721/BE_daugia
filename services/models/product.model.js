@@ -1,6 +1,7 @@
-const { default: knex } = require("knex");
+const knex = require("knex");
 const db = require("../../utils/db");
 const tableName = "product";
+
 
 module.exports = {
   findAll() {
@@ -35,5 +36,8 @@ module.exports = {
     return db(tableName).where("Isdeleted", 0).whereExists(function() {
       this.select('*').from('auction').whereRaw('auction.IdProduct = product.id');
     })
+  },
+  getAuctionAvailable() {
+    return db(tableName).where('DateEnd', '>=', new Date())
   }
 };
