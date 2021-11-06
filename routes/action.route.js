@@ -169,6 +169,7 @@ router.post("/reject", async(req,res)=>{
 
   const sendData = await getBiddersList(data.IdProduct);
   broadcastAll(JSON.stringify(["updateProductDetail",sendData]));
+  
 
   return res.status(202).json({data});
 })
