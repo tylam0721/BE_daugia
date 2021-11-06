@@ -33,7 +33,10 @@ router.post("/upto", async (req, res) => {
   if (raw === 0) {
     return res.status(500).json("was row ecfect").end();
   }
-  res.status(202).json({
+
+  await userModel.reserReques(data.id);
+
+  return res.status(202).json({
     message: "Upto bidder to seller successfully",
   });
 });

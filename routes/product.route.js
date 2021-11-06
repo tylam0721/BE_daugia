@@ -21,9 +21,14 @@ var user_seller_found = [];
 var user_buyer_found = [];
 var des_found = [];
 var product_found = [];
+<<<<<<< HEAD
 var watch_list_found = [];
+=======
+var watch_list_found=[];
+var infor_found =[];
+>>>>>>> 5b1db4551604d5a0c2f27e95ff6f9a49d549b69f
 
-const formatJson = (product, userbuyer, userSeller, images, des, watch_list) => {
+const formatJson = (product, userbuyer, userSeller, images, des, watch_list, userInfor) => {
   return {
     id: product.id,
     IdCategory: product.IdCategory,
@@ -45,6 +50,7 @@ const formatJson = (product, userbuyer, userSeller, images, des, watch_list) => 
     images: images,
     des: des,
     watch_list,
+    UserInfor: userInfor,
   };
 };
 
@@ -74,6 +80,7 @@ const formatJsonBuyer = (buyer) => {
 
 const formatJsonUser = (user) => {
   return {
+    id: user.id,
     Firstname: user.Firstname,
     Lastname: user.Lastname,
     RateGood: user.RateGood,
@@ -89,6 +96,7 @@ const formatJsonWatchList = (watch_list) => {
     IdUserWatch: watch_list.IdUser,
   }
 }
+
 
 // GET ALL
 router.get("/", async (req, res) => {
@@ -154,6 +162,7 @@ router.get("/category/:id", async (req, res) => {
   const getimage = await imageModel.findAll();
   const getdes = await desModel.findAll();
   const getaction = await actionModel.findAll();
+
   product_found = [];
 
   data.map((r) => {
@@ -218,8 +227,13 @@ router.get("/:id", async (req, res) => {
   const getaction = await actionModel.findAll();
   const getimage = await imageModel.findAll();
   const getdes = await desModel.findAll();
+<<<<<<< HEAD
   const getwatchlist = await watchlistModel.findAll();
 
+=======
+  const getwatchlist=await watchlistModel.findAll();
+  const getbuyerInformation = await actionModel.findByIdGroupBy(id,'IdUser');
+>>>>>>> 5b1db4551604d5a0c2f27e95ff6f9a49d549b69f
   product_found = [];
 
   data.map((r) => {
@@ -228,6 +242,8 @@ router.get("/:id", async (req, res) => {
     user_seller_found = [];
     watch_list_found = [];
     des_found = [];
+    infor_found =[];
+
     if (r.id == id) {
       getimage.map((i) => {
         if (i.IdProduct == r.id) {
@@ -264,6 +280,16 @@ router.get("/:id", async (req, res) => {
         }
       });
 
+      getuser.map((u)=>{
+        getbuyerInformation.map((infor)=>{
+          if(u.id == infor.IdUser)
+          {
+            infor_found.push(formatJsonUser(u));
+          }
+        })
+        
+      });
+
       product_found.push(
         formatJson(
           r,
@@ -272,6 +298,7 @@ router.get("/:id", async (req, res) => {
           image_found,
           des_found,
           watch_list_found,
+          infor_found
         )
       );
     }

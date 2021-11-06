@@ -1,5 +1,5 @@
 const db = require("../../utils/db");
-const tableName = "auction";
+const tableName = "auction_rejected";
 
 module.exports = {
   findAll() {
@@ -14,11 +14,7 @@ module.exports = {
   update(id, data) {
     return db(tableName).where("id", id).update(data);
   },
-  findByIdGroupBy(id,columnName)
-  {
-    return db(tableName).where("IdProduct", id).andWhere("Isdeleted",0).groupBy("IdUser");
-  },
-  deleteByUserIdAndProductId(userId,productId) {
-    return db(tableName).where("IdUser", userId).andWhere("IdProduct",productId).update("Isdeleted", 1);
+  findByUserId(id){
+    return db(tableName).where("Isdeleted", 0).andWhere("IdBuyer", id);
   },
 };
