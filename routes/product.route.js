@@ -463,7 +463,7 @@ router.post("/auctioned", async (req, res) => {
 
 router.post("/auction-available", async (req, res) => {
   const data = await productModel.getAuctionAvailable();
-  console.log(data.length);
+  // console.log(data.length);
   return res.status(202).json({data: data});
 })
 
