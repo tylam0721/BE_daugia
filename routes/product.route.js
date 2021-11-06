@@ -21,12 +21,8 @@ var user_seller_found = [];
 var user_buyer_found = [];
 var des_found = [];
 var product_found = [];
-<<<<<<< HEAD
-var watch_list_found = [];
-=======
 var watch_list_found=[];
 var infor_found =[];
->>>>>>> 5b1db4551604d5a0c2f27e95ff6f9a49d549b69f
 
 const formatJson = (product, userbuyer, userSeller, images, des, watch_list, userInfor) => {
   return {
@@ -227,13 +223,8 @@ router.get("/:id", async (req, res) => {
   const getaction = await actionModel.findAll();
   const getimage = await imageModel.findAll();
   const getdes = await desModel.findAll();
-<<<<<<< HEAD
-  const getwatchlist = await watchlistModel.findAll();
-
-=======
   const getwatchlist=await watchlistModel.findAll();
   const getbuyerInformation = await actionModel.findByIdGroupBy(id,'IdUser');
->>>>>>> 5b1db4551604d5a0c2f27e95ff6f9a49d549b69f
   product_found = [];
 
   data.map((r) => {
