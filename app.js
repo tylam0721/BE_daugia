@@ -53,6 +53,7 @@ app.use(function (err, req, res, next) {
 });
 
 let wss;
+var lookup = {};
 if(!wss)
 {
     wss = new WSServer({
@@ -64,9 +65,10 @@ if(!wss)
       server.on('request', app);
       
       wss.on('connection', function connection(ws) {
-       
         ws.on('message', function incoming(message) {
           console.log(`received: ${message}`);
+          ws.id = JSON.parse(message).id;
+          lookup[ws.id] = ws;
         });
       });
 }
@@ -79,6 +81,10 @@ global.broadcastAll = function (msg){
   wss.clients.forEach(function each(client) {
     client.send(msg);
  });
+}
+
+global.broadcastSingle = function (id,msg){
+  lookup[id].send(msg);
 }
 
 /*app.listen(PORT, function () {
