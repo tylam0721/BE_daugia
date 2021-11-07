@@ -130,4 +130,24 @@ module.exports = {
       .update("FirstName", user.Firstname)
       .update("LastName", user.Lastname);
   },
+  findWinnerBidder(productId) {
+    return db(tableName)
+      .join("auction", "user.id", "=", "auction.IdUser")
+      .where("auction.IdProduct", productId)
+      .select('user.id', 
+      'user.Email', 
+      'user.Adress',
+      'user.Birthday',
+      'user.Firstname',
+      'user.DateCreated',
+      'user.DateUpdated',
+      'user.RateGood',
+      'user.RateBad',
+      'user.Scope',
+      'user.Lastname',
+      'auction.price'
+      )
+      .orDerBy('auction.price')
+      .limit(1);
+  },
 };
