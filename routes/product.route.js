@@ -14,6 +14,7 @@ const watchlistModel = require("../services/models/watchList.model");
 const { watch } = require("fs");
 const cron = require("node-cron");
 const mailer = require('../utils/mailer');
+const moment = require("moment");
 
 
 var image_found = [];
@@ -466,5 +467,30 @@ router.post("/auction-available", async (req, res) => {
   // console.log(data.length);
   return res.status(202).json({data: data});
 })
+
+router.post("/auction-coming-end", async (req, res) => {
+  const products = await productModel.findAll();
+  const result = [];
+  const comingEndHourDefinition = 10; // 10 hour 
+  const currentDateTime = new Date();
+
+  if (products.length == 0) {
+    return;
+  }
+  products.map((product) => {
+    if ((subtractDateTime(product.DateEnd, currentDateTime) < comingEndHourDefinition) && 
+        subtractDateTime(product.DateEnd, currentDateTime) > 0) {
+      result.push(product);
+    }
+  })
+  return res.status(202).json({data: result});
+})
+
+function subtractDateTime(dateEnd, dateFrom) {
+  if (dateEnd < dateFrom) {
+    return -1;
+  }
+  return Math.abs(dateEnd - dateFrom) / 36e5;
+}
 
 module.exports = router;
