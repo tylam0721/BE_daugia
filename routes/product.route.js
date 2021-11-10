@@ -16,6 +16,7 @@ const cron = require("node-cron");
 const mailer = require('../utils/mailer');
 const moment = require("moment");
 
+const cronJob=require("../utils/cronJob");
 
 var image_found = [];
 var user_seller_found = [];
@@ -341,6 +342,7 @@ router.post("/add", async (req, res) => {
     return res.status(500).json("was row ecfect").end();
   }
   broadcastAll(JSON.stringify(["newProduct", product]));
+  cronJob.startConJob(product.DateEnd,raw[0].id);
   res.status(202).json({ productId: raw[0] });
 });
 // UPDATE Product

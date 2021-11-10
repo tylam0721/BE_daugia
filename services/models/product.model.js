@@ -32,6 +32,9 @@ module.exports = {
   deleteWithUserAndProductId(entity){
     return db(tableName).where("IdUser", entity.IdUser).andWhere("IdProduct",entity.IdProduct).update("Isdeleted", 1);
   },
+  findAllOnWatchList(UserID){
+    return db(tableName).innerJoin("watch_list","watch_list.IdProduct",`${tableName}.id`).where("watch_list.IdUser",UserID);
+  },
   getAuctioned() {
     return db(tableName).where("Isdeleted", 0).whereExists(function() {
       this.select('*').from('auction').whereRaw('auction.IdProduct = product.id');
