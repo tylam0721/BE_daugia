@@ -32,8 +32,8 @@ module.exports = {
   deleteWithUserAndProductId(entity){
     return db(tableName).where("IdUser", entity.IdUser).andWhere("IdProduct",entity.IdProduct).update("Isdeleted", 1);
   },
-  findAllOnWatchList(UserID){
-    return db(tableName).innerJoin("watch_list","watch_list.IdProduct",`${tableName}.id`).where("watch_list.IdUser",UserID);
+  findAllOnWatchList(){
+    return db(tableName).innerJoin("watch_list","watch_list.IdProduct",`${tableName}.id`);
   },
   getAuctioned() {
     return db(tableName).where("Isdeleted", 0).whereExists(function() {
@@ -42,5 +42,22 @@ module.exports = {
   },
   getAuctionAvailable() {
     return db(tableName).where('DateEnd', '>=', new Date())
+  },
+  findHighestPrice(){
+    return db(tableName).orderBy('Price','Desc').limit(5);
+  },
+  findHighestBidCount(){
+    return db(tableName).orderBy('countBid','Desc').limit(5);
+  },
+  findAboutToEnd(){
+    return db(tableName).orderBy('DateEnd','Desc').limit(5);
+  },
+  updateCountBid(id, countBid){
+    return db(tableName).where("id", id).update({
+      countBid: countBid
+    });
+  },
+  findAllOnAuction(){
+    return db(tableName).innerJoin("auction","auction.IdProduct",`${tableName}.id`);
   }
 };

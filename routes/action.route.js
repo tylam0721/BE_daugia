@@ -5,7 +5,7 @@ const actionModel = require("../services/models/action.model");
 const productMode = require("../services/models/product.model");
 const desModel = require("../services/models/description.model");
 const imageModel = require("../services/models/image.model");
-const watchlistModel=require("../services/models/watchList.model");
+const watchlistModel = require("../services/models/watchList.model");
 const rejectedModel = require("../services/models/rejected.model");
 const router = express.Router();
 
@@ -53,8 +53,7 @@ router.post("/check", async (req, res) => {
   const checkProd = await productMode.findById(productId);
   const rejectedCheck = await rejectedModel.findByUserId(id);
 
-  if(rejectedCheck.length > 0)
-  {
+  if (rejectedCheck.length > 0) {
     res.status(500).json({
       message: "Người dùng không đủ điều kiện",
     }).end();
@@ -68,13 +67,13 @@ router.post("/check", async (req, res) => {
           message: "Cho phép người dùng chưa từng ra giá tham gia",
         })
         .end();
-    } 
+    }
     return res
-    .status(201)
-    .json({
-      message: "Không cho phép người dùng chưa từng ra giá sản phẩm",
-    })
-    .end();
+      .status(201)
+      .json({
+        message: "Không cho phép người dùng chưa từng ra giá sản phẩm",
+      })
+      .end();
   }
 
   if (check.RateGood / (check.RateBad + check.RateGood) >= 0.8) {
@@ -111,7 +110,9 @@ router.post("/buys", async (req, res) => {
       DateCreated: new Date(),
       DateUpdated: new Date(),
     };
-
+    const bidCount=checkPriceProduct[0].countBid+1;
+    await productMode.updateCountBid(data.IdProduct,bidCount);
+    
     const raw = await actionModel.add(auction);
 
     if (raw === 0 || raw == null) {
@@ -120,7 +121,8 @@ router.post("/buys", async (req, res) => {
 
     await productMode.updatePrice(data.IdProduct, data.Price, data.IdUser);
     const sendData = await getBiddersList(data.IdProduct);
-    broadcastAll(JSON.stringify(["updateProductDetail",sendData]));
+    broadcastAll(JSON.stringify(["updateProductDetail", sendData]));
+
 
 
     return res.status(202).json({ raw });
@@ -128,8 +130,8 @@ router.post("/buys", async (req, res) => {
   return res.status(500).json({ message: "Bạn đấu giá không thành công" });
 });
 
-router.post("/reject", async(req,res)=>{
-  const data={
+router.post("/reject", async (req, res) => {
+  const data = {
     IdProduct: req.body.IdProduct,
     IdBuyer: req.body.IdBuyer,
     Isdeleted: 0
@@ -139,39 +141,36 @@ router.post("/reject", async(req,res)=>{
   const checkAuction = await actionModel.findAll();
 
   let record_found = [];
-  check.map((r)=>{
-    if(r.IdBuyer === data.IdBuyer && r.IdProduct === data.IdProduct)
-    {
+  check.map((r) => {
+    if (r.IdBuyer === data.IdBuyer && r.IdProduct === data.IdProduct) {
       record_found.push(r);
     }
   });
 
   let auctionRecord_found = [];
-  checkAuction.map((r)=>{
-    if(r.IdUser === data.IdBuyer && r.IdProduct === data.IdProduct)
-    {
+  checkAuction.map((r) => {
+    if (r.IdUser === data.IdBuyer && r.IdProduct === data.IdProduct) {
       auctionRecord_found.push(r);
     }
   });
 
-  if(record_found > 0 || auctionRecord_found === 0)
-  {
-    return res.status(500).json({message:'user đã bị từ chối hoặc chưa đấu giá trong sản phẩm này'}).end();
+  if (record_found > 0 || auctionRecord_found === 0) {
+    return res.status(500).json({ message: 'user đã bị từ chối hoặc chưa đấu giá trong sản phẩm này' }).end();
   }
 
   const addRecord = await rejectedModel.add(data);
 
-  const removeUser = await actionModel.deleteByUserIdAndProductId(data.IdBuyer,data.IdProduct);
+  const removeUser = await actionModel.deleteByUserIdAndProductId(data.IdBuyer, data.IdProduct);
 
   if (addRecord === 0 || removeUser === 0) {
     return res.status(500).json("was row ecfect").end();
   }
 
   const sendData = await getBiddersList(data.IdProduct);
-  broadcastAll(JSON.stringify(["updateProductDetail",sendData]));
-  
+  broadcastAll(JSON.stringify(["updateProductDetail", sendData]));
 
-  return res.status(202).json({data});
+
+  return res.status(202).json({ data });
 })
 
 const formatJson = (product, userbuyer, userSeller, images, des, watch_list) => {
@@ -191,7 +190,7 @@ const formatJson = (product, userbuyer, userSeller, images, des, watch_list) => 
     DateUpdated: product.DateUpdated,
     Isdeleted: product.Isdeleted,
     UserSeller: userSeller,
-    UserBuyer:  userbuyer,
+    UserBuyer: userbuyer,
     DateEnd: product.DateEnd,
     images: images,
     des: des,
@@ -214,7 +213,7 @@ const formatJsonDes = (des_product) => {
   };
 };
 
-const formatJsonBuyer = (buyer)=>{
+const formatJsonBuyer = (buyer) => {
   return {
     id: buyer.id,
     DateStart: buyer.DateStart,
@@ -233,30 +232,30 @@ const formatJsonUser = (user) => {
   };
 };
 
-const formatJsonWatchList=(watch_list)=>{
+const formatJsonWatchList = (watch_list) => {
   return {
     watchlistid: watch_list.id,
     Isdeleted: watch_list.Isdeleted,
     IdUserWatch: watch_list.IdUser,
   }
 }
-const getBiddersList = async function(id){
+const getBiddersList = async function (id) {
   const data = await productMode.findAll();
   const getuser = await userModel.findAll();
   const getaction = await actionModel.findAll();
   const getimage = await imageModel.findAll();
   const getdes = await desModel.findAll();
-  const getwatchlist=await watchlistModel.findAll();
-  const getbuyerInformation = await actionModel.findByIdGroupBy(id,'IdUser');
+  const getwatchlist = await watchlistModel.findAll();
+  const getbuyerInformation = await actionModel.findByIdGroupBy(id, 'IdUser');
   product_found = [];
 
   data.map((r) => {
     image_found = [];
     user_buyer_found = [];
     user_seller_found = [];
-    watch_list_found=[];
+    watch_list_found = [];
     des_found = [];
-    infor_found =[];
+    infor_found = [];
     if (r.id == id) {
       getimage.map((i) => {
         if (i.IdProduct == r.id) {
@@ -265,9 +264,8 @@ const getBiddersList = async function(id){
       });
       getaction.map((b) => {
         if (b.IdProduct == r.id) {
-          getuser.map((u)=>{
-            if(u.id == b.IdUser)
-            {
+          getuser.map((u) => {
+            if (u.id == b.IdUser) {
               user_buyer_found.push(formatJsonBuyer({
                 id: u.id,
                 Lastname: u.Lastname,
@@ -278,7 +276,7 @@ const getBiddersList = async function(id){
           })
         }
       });
-      getuser.map((u)=>{
+      getuser.map((u) => {
         if (u.id == r.IdUserSeller) {
           user_seller_found.push(formatJsonUser(u));
         }
@@ -289,19 +287,18 @@ const getBiddersList = async function(id){
         }
       });
       getwatchlist.map((w) => {
-        if(w.IdProduct == r.id){
+        if (w.IdProduct == r.id) {
           watch_list_found.push(formatJsonWatchList(w))
         }
       });
 
-      getuser.map((u)=>{
-        getbuyerInformation.map((infor)=>{
-          if(u.id == infor.IdUser)
-          {
+      getuser.map((u) => {
+        getbuyerInformation.map((infor) => {
+          if (u.id == infor.IdUser) {
             infor_found.push(formatJsonUser(u));
           }
         })
-        
+
       });
 
       product_found.push(
