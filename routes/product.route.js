@@ -12,7 +12,6 @@ const { cloudinary } = require("../utils/cloudinary");
 const router = express.Router();
 const watchlistModel = require("../services/models/watchList.model");
 const { watch } = require("fs");
-const cron = require("node-cron");
 const mailer = require('../utils/mailer');
 const moment = require("moment");
 
