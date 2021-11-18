@@ -37,7 +37,7 @@ const formatJson = (user, watchlist,auctionList) => {
 
 const formatJsonWatchList = (product) => {
     return {
-        id: product.id,
+        id: product.IdProduct,
         IdCategory: product.IdCategory,
         IdUserBuyer: product.IdUserBuyer,
         IdUserSeller: product.IdUserSeller,
@@ -56,7 +56,7 @@ const formatJsonWatchList = (product) => {
 };
 const formatJsonAuctionList = (product) => {
     return {
-        id: product.id,
+        id: product.IdProduct,
         IdCategory: product.IdCategory,
         IdUserBuyer: product.IdUserBuyer,
         IdUserSeller: product.IdUserSeller,
@@ -97,9 +97,9 @@ router.get('/info/:id', async function (req, res) {
     });
     auctionList.map((a) => {
         if (a.IdUser == userId) {
-            auctionList_found.push(formatJsonWatchList(a));
+            auctionList_found.push(formatJsonAuctionList(a));
         }
-    })
+    });
     user_found = formatJson(data, watchList_found,auctionList_found)
     if (data === 0) {
         return res.status(500).json("was row ecfect").end();
