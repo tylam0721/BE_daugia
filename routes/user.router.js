@@ -14,7 +14,7 @@ const roleModel = require('../services/models/role.model');
 const productModel = require('../services/models/product.model');
 require('moment/locale/vi');
 
-const formatJson = (user, watchlist,auctionList) => {
+const formatJson = (user, watchlist,auctionList,winningList) => {
     return {
         id: user.id,
         Email: user.Email,
@@ -31,7 +31,8 @@ const formatJson = (user, watchlist,auctionList) => {
         RefreshToken: user.RefreshToken,
         Lastname: user.Lastname,
         watchlist: watchlist,
-        auctionList:auctionList
+        auctionList:auctionList,
+        winningList:winningList
     };
 };
 
@@ -59,6 +60,12 @@ const formatJsonAuctionList = (product) => {
     };
 };
 
+const compareDate=(date1)=>{
+    const currentDate=moment(moment(),"YYYY-MM-DD HH:mm:ss");
+    const date = moment(date1,"YYYY-MM-DD HH:mm:sss");
+    return date.diff(currentDate,'days');
+}
+
 router.get('/', async function (req, res) {
     const rows = await userModel.findAll();
     res.json(rows);
@@ -66,6 +73,7 @@ router.get('/', async function (req, res) {
 
 var watchList_found = [];
 var auctionList_found = [];
+var winList_found=[];
 var user_found;
 
 router.get('/info/:id', async function (req, res) {
@@ -73,7 +81,7 @@ router.get('/info/:id', async function (req, res) {
     const data = await userModel.findById(userId);
     const prodlist = await productModel.findAllOnWatchList();
     const auctionList = await productModel.findAllOnAuction();
-
+    const allProd=await productModel.findAll();
     watchList_found = [];
     prodlist.map((i) => {
         if (i.IdUser == userId) {
@@ -82,12 +90,20 @@ router.get('/info/:id', async function (req, res) {
     });
     auctionList_found = [];
     auctionList.map((a) => {
-
-        if (a.IdUser == userId) {
+        if(compareDate(a.DateEnd)>=0 && a.IdUser == userId){
             auctionList_found.push(formatJsonAuctionList(a));
         }
     });
-    user_found = formatJson(data, watchList_found,auctionList_found)
+
+    winList_found = [];
+
+    allProd.map((r)=>{
+        if(r.IdUserBuyer==userId){
+            winList_found.push(formatJsonAuctionList(r))
+        }
+    });
+
+    user_found = formatJson(data, watchList_found,auctionList_found,winList_found)
     if (data === 0) {
         return res.status(500).json("was row ecfect").end();
     }
@@ -132,7 +148,7 @@ router.put('/info/update', validate(update_user_info_schema), async function (re
         Lastname: req.body.Lastname,
     }
     await userModel.update(userData);
-    return res.json({ message: "User info updated" }).status(201).end();
+    return res.status(201).json({ message: "User info updated" }).end();
 });
 
 router.post('/request/upto-seller/:id', async function (req, res) {
