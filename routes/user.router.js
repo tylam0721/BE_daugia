@@ -132,7 +132,7 @@ router.put('/info/update', validate(update_user_info_schema), async function (re
         Lastname: req.body.Lastname,
     }
     await userModel.update(userData);
-    return res.json({ message: "User info updated" }).status(200).end();
+    return res.json({ message: "User info updated" }).status(201).end();
 });
 
 router.post('/request/upto-seller/:id', async function (req, res) {
