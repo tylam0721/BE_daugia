@@ -82,7 +82,7 @@ router.get('/info/:id', async function (req, res) {
     });
     auctionList_found = [];
     auctionList.map((a) => {
-        
+
         if (a.IdUser == userId) {
             auctionList_found.push(formatJsonAuctionList(a));
         }
@@ -127,7 +127,7 @@ router.put('/info/update', validate(update_user_info_schema), async function (re
         Id: req.body.Id,
         Email: req.body.Email,
         Address: req.body.Address,
-        Birthday: moment(req.body.Birthday, 'MM/DD/YYYY').format('YYYY-MM-DD'),
+        Birthday: moment(req.body.Birthday, 'YYYY-MM-DD').format('YYYY-MM-DD'),
         Firstname: req.body.Firstname,
         Lastname: req.body.Lastname,
     }
