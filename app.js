@@ -19,7 +19,7 @@ const PORT = process.env.PORT || 4000;
 
 app.use("/api/auth", require("./routes/auth.route"));
 
-app.use("/api/user", auth, require("./routes/user.router"));
+app.use("/api/user", require("./routes/user.router"));
 
 app.use("/api/register", require("./routes/register.route"));
 
