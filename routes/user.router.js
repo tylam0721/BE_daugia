@@ -132,6 +132,39 @@ router.put('/update-password/:id', async function (req, res) {
     res.status(200).json({ "message": "Password update successfully!" }).end();
 });
 
+router.put('/reset-password', async function (req, res) {
+    const userId = req.body.id;
+
+    console.log(userId);
+
+    var passRandom = Math.floor(Math.random() * 10000000);
+
+    console.log(passRandom);
+
+    var user = await userModel.findById(userId);
+
+    mailer.send({
+        from: 'webdaugiaonline@gmail.com',
+        to: `${user.Email}`,
+        subject: 'Web Đấu Giá Online: Reset mật khẩu của bạn',
+        html: `
+        Xin chào ${user.Firstname + user.Lastname}, cảm ơn bạn đã tham gia trang web Đấu Giá Online.
+        <br> 
+        Mật Khẩu mới của bạn là: ${passRandom.toString()}
+        <br>
+        (Đây là thư tự động vui lòng không phản hồi)
+        `
+    });
+
+    var newHashPassword = bcrypt.hashSync(passRandom.toString(), config.authentication.saltRounds);
+    const rows = await userModel.updatePassword(userId, newHashPassword);
+    if (!rows) {
+        return res.status(404).json({ message: "Something went wrong" }).end();
+    }
+    res.status(200).json({ "message": "Password update successfully!" }).end();
+});
+
+
 router.put('/info/update', validate(update_user_info_schema), async function (req, res) {
     const user = await userModel.findById(req.body.Id);
     if (!user) {

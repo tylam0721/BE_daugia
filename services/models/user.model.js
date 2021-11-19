@@ -4,7 +4,7 @@ const tableName = "user";
 
 module.exports = {
   findAll() {
-    return db(tableName).where("Isdeleted", 0);
+    return db(tableName).whereNot('scope', 25).where("Isdeleted", 0);
   },
 
   findByBidder() {
@@ -98,7 +98,7 @@ module.exports = {
   },
 
   del(id) {
-    return db(tableName).where("Id", id).del();
+    return db(tableName).where("id", id).update("Isdeleted", 1);
   },
 
   patch(id, user_noId) {
