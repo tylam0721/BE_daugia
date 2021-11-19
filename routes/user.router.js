@@ -38,20 +38,11 @@ const formatJson = (user, watchlist,auctionList) => {
 const formatJsonWatchList = (product) => {
     return {
         id: product.IdProduct,
-        IdCategory: product.IdCategory,
         IdUserBuyer: product.IdUserBuyer,
         IdUserSeller: product.IdUserSeller,
         Name: product.Name,
-        StartingPrice: product.StartingPrice,
-        StepPrice: product.StepPrice,
         NowPrice: product.NowPrice,
-        Description: product.Description,
-        IsUpdatedDescription: product.IsUpdatedDescription,
-        IsCheckReturn: product.IsCheckReturn,
-        DateCreated: product.DateUpdated,
-        DateUpdated: product.DateUpdated,
-        Isdeleted: product.Isdeleted,
-        DateEnd: product.DateEnd,
+        Description: product.Description
     };
 };
 const formatJsonAuctionList = (product) => {
@@ -61,16 +52,8 @@ const formatJsonAuctionList = (product) => {
         IdUserBuyer: product.IdUserBuyer,
         IdUserSeller: product.IdUserSeller,
         Name: product.Name,
-        StartingPrice: product.StartingPrice,
-        StepPrice: product.StepPrice,
         NowPrice: product.NowPrice,
-        Description: product.Description,
-        IsUpdatedDescription: product.IsUpdatedDescription,
-        IsCheckReturn: product.IsCheckReturn,
-        DateCreated: product.DateUpdated,
-        DateUpdated: product.DateUpdated,
-        Isdeleted: product.Isdeleted,
-        DateEnd: product.DateEnd,
+        Description: product.Description
     };
 };
 
@@ -95,6 +78,7 @@ router.get('/info/:id', async function (req, res) {
             watchList_found.push(formatJsonWatchList(i));
         }
     });
+    auctionList_found = [];
     auctionList.map((a) => {
         if (a.IdUser == userId) {
             auctionList_found.push(formatJsonAuctionList(a));
