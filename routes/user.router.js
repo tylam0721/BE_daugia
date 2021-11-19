@@ -42,7 +42,8 @@ const formatJsonWatchList = (product) => {
         IdUserSeller: product.IdUserSeller,
         Name: product.Name,
         NowPrice: product.NowPrice,
-        Description: product.Description
+        Description: product.Description,
+        DateEnd:product.DateEnd
     };
 };
 const formatJsonAuctionList = (product) => {
@@ -53,7 +54,8 @@ const formatJsonAuctionList = (product) => {
         IdUserSeller: product.IdUserSeller,
         Name: product.Name,
         NowPrice: product.NowPrice,
-        Description: product.Description
+        Description: product.Description,
+        DateEnd:product.DateEnd
     };
 };
 
@@ -80,6 +82,7 @@ router.get('/info/:id', async function (req, res) {
     });
     auctionList_found = [];
     auctionList.map((a) => {
+        
         if (a.IdUser == userId) {
             auctionList_found.push(formatJsonAuctionList(a));
         }
