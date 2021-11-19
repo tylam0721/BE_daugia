@@ -98,7 +98,7 @@ router.get('/info/:id', async function (req, res) {
     winList_found = [];
 
     allProd.map((r)=>{
-        if(r.IdUserBuyer==userId){
+        if(r.IdUserBuyer==userId && compareDate(r.DateEnd)<=0){
             winList_found.push(formatJsonAuctionList(r))
         }
     });
