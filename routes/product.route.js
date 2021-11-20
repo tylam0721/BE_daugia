@@ -365,7 +365,7 @@ router.post("/update", async (req, res) => {
     message: "add product successfully",
   });
 });
-
+// write logs
 // API Update Description product
 router.post("/add-des", async (req, res) => {
   const data = req.body;
