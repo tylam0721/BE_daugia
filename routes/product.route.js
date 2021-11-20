@@ -47,15 +47,49 @@ const formatJson = (product, userbuyer, userSeller, images, des, watch_list, use
     images: images,
     des: des,
     watch_list,
-    UserInfor: userInfor,
+    UserInfor: userInfor
   };
 };
+
+const formatJsonCountAction = (product, userbuyer, userSeller, images, des, userInfor, auction) => {
+  return {
+    id: product.id,
+    IdCategory: product.IdCategory,
+    IdUserBuyer: product.IdUserBuyer,
+    IdUserSeller: product.IdUserSeller,
+    Name: product.Name,
+    StartingPrice: product.StartingPrice,
+    StepPrice: product.StepPrice,
+    NowPrice: product.NowPrice,
+    Description: product.Description,
+    IsUpdatedDescription: product.IsUpdatedDescription,
+    IsCheckReturn: product.IsCheckReturn,
+    DateCreated: product.DateUpdated,
+    DateUpdated: product.DateUpdated,
+    Isdeleted: product.Isdeleted,
+    UserSeller: userSeller,
+    UserBuyer: userbuyer,
+    DateEnd: product.DateEnd,
+    images: images,
+    des: des,
+    UserInfor: userInfor,
+    Countauction: auction
+  };
+};
+
 
 const formatJsonImage = (image_product) => {
   return {
     id: image_product.id,
     Name: image_product.Name,
     IdProduct: image_product.IdProduct,
+  };
+};
+
+
+const formatJsosAction = (auction) => {
+  return {
+    Countauction: auction
   };
 };
 
@@ -115,6 +149,7 @@ router.get("/", async (req, res) => {
         image_found.push(formatJsonImage(i));
       }
     });
+    
     getaction.map((b) => {
       if (b.IdProduct == r.id) {
         getuser.map((u)=>{
@@ -149,6 +184,65 @@ router.get("/", async (req, res) => {
     return res.status(500).json("was row ecfect").end();
   }
   res.status(202).json(product_found);
+});
+
+// GET Số lượt đánh giá cao nhất
+router.get("/maxauction", async (req, res) => {
+  const data = await productModel.findAll();
+  const getuser = await userModal.findAll();
+  const getimage = await imageModel.findAll();
+  const getdes = await desModel.findAll();
+  const getaction = await actionModel.findAll();
+  product_found = [];
+  data.map((r) => {
+    image_found = [];
+    user_buyer_found = [];
+    user_seller_found = [];
+    des_found = [];
+
+    getimage.map((i) => {
+      if (i.IdProduct == r.id) {
+        image_found.push(formatJsonImage(i));
+      }
+    });
+
+    let countauction = 0;
+
+    getaction.map((b) => {
+      if (b.IdProduct == r.id) {
+        countauction = countauction + 1;
+        getuser.map((u)=>{
+          if(u.id == b.IdUser)
+          {
+            user_buyer_found.push(formatJsonBuyer({
+              id: u.id,
+              Lastname: u.Lastname,
+              DateStart: b.DateStart,
+              Price: b.Price
+            }));
+          }
+        })
+      }
+    });
+    getuser.map((u) => {
+      if (u.id == r.IdUserSeller) {
+        user_seller_found.push(formatJsonUser(u));
+      }
+    });
+    getdes.map((d) => {
+      if (d.IdProduct == r.id) {
+        des_found.push(formatJsonDes(d));
+      }
+    });
+    product_found.push(
+      formatJsonCountAction(r, user_buyer_found.sort((a, b) => Number(b.Price) - Number(a.Price)), user_seller_found, image_found, des_found, user_seller_found,countauction)
+    );
+  });
+
+  if (data === 0) {
+    return res.status(500).json("was row ecfect").end();
+  }
+  return res.status(202).json(product_found.sort((a, b) => Number(a.Countauction) - Number(b.Countauction)).reverse());
 });
 
 //GET Product by category
