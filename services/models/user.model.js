@@ -132,7 +132,7 @@ module.exports = {
   },
   findWinnerBidder(productId) {
     return db(tableName)
-      .join("auction", "user.id", "=", "auction.IdUser")
+      .join("auction", "user.id", "auction.IdUser")
       .where("auction.IdProduct", productId)
       .select('user.id', 
       'user.Email', 
@@ -150,4 +150,7 @@ module.exports = {
       .orDerBy('auction.price')
       .limit(1);
   },
+  findEmailHighestBid(productID){
+    return db.select("Email","Firstname").from(tableName).join("product", `${tableName}.id`,"product.IdUserBuyer").where("product.id",productID);
+  }
 };
