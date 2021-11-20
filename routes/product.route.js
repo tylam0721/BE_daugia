@@ -474,9 +474,10 @@ router.post("/auction-coming-end", async (req, res) => {
   const result = [];
   const comingEndHourDefinition = 24 * 4; // 4 days 
   const currentDateTime = new Date();
+  const getimage = await imageModel.findAll();
 
   if (products.length == 0) {
-    return;
+    return "not found any products";
   }
   products.map((product) => {
     if ((subtractDateTime(product.DateEnd, currentDateTime) < comingEndHourDefinition) && 
@@ -487,25 +488,24 @@ router.post("/auction-coming-end", async (req, res) => {
 
   result.sort((firstEl, secondEl) => subtractDateTime(firstEl.DateEnd, currentDateTime) - subtractDateTime(secondEl.DateEnd, currentDateTime))
 
+  result.map((product) => {
+    let image_found = []
+    getimage.map((i) => {
+      if (i.IdProduct == product.id) {
+        image_found.push(formatJsonImage(i));
+      }
+    });
+
+    product.images = image_found
+  })
+
   return res.status(202).json({data: result});
 })
 
-router.post("/most-views", async (req, res) => {
-  const products = await productModel.findAll();
-  const result = [];
-  const comingEndHourDefinition = 10; // 10 hour 
-  const currentDateTime = new Date();
-
-  if (products.length == 0) {
-    return;
-  }
-  products.map((product) => {
-    if ((subtractDateTime(product.DateEnd, currentDateTime) < comingEndHourDefinition) && 
-        subtractDateTime(product.DateEnd, currentDateTime) > 0) {
-      result.push(product);
-    }
-  })
-  return res.status(202).json({data: result});
+router.post("/highest-auctioned", async (req, res) => {
+  const data = await productModel.getHighestAuctioned();
+  console.log(data[0]);
+  return res.status(202).json({data: data});
 })
 
 function subtractDateTime(dateEnd, dateFrom) {
