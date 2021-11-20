@@ -59,5 +59,8 @@ module.exports = {
   },
   findAllOnAuction(){
     return db(tableName).innerJoin("auction","auction.IdProduct",`${tableName}.id`).where(`${tableName}.DateEnd`,">","2021-11-18T12:53:53.000Z");
-  }
+  },
+  getHighestAuctioned() {
+    return db('auction').count('IdProduct as auction_count, productId')
+  },
 };
