@@ -468,7 +468,29 @@ router.post("/auction-available", async (req, res) => {
   return res.status(202).json({data: data});
 })
 
+// danh sách sản phẩm sắp kết thúc đấu giá
 router.post("/auction-coming-end", async (req, res) => {
+  const products = await productModel.findAll();
+  const result = [];
+  const comingEndHourDefinition = 24 * 4; // 4 days 
+  const currentDateTime = new Date();
+
+  if (products.length == 0) {
+    return;
+  }
+  products.map((product) => {
+    if ((subtractDateTime(product.DateEnd, currentDateTime) < comingEndHourDefinition) && 
+        subtractDateTime(product.DateEnd, currentDateTime) > 0) {
+      result.push(product);
+    }
+  })
+
+  result.sort((firstEl, secondEl) => subtractDateTime(firstEl.DateEnd, currentDateTime) - subtractDateTime(secondEl.DateEnd, currentDateTime))
+
+  return res.status(202).json({data: result});
+})
+
+router.post("/most-views", async (req, res) => {
   const products = await productModel.findAll();
   const result = [];
   const comingEndHourDefinition = 10; // 10 hour 
