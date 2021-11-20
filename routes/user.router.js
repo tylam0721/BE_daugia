@@ -14,7 +14,7 @@ const roleModel = require('../services/models/role.model');
 const productModel = require('../services/models/product.model');
 require('moment/locale/vi');
 
-const formatJson = (user, watchlist,auctionList,winningList) => {
+const formatJson = (user, watchlist,auctionList,winningList,uploadList,soldList) => {
     return {
         id: user.id,
         Email: user.Email,
@@ -32,7 +32,9 @@ const formatJson = (user, watchlist,auctionList,winningList) => {
         Lastname: user.Lastname,
         watchlist: watchlist,
         auctionList:auctionList,
-        winningList:winningList
+        winningList:winningList,
+        uploadList:uploadList,
+        soldList:soldList
     };
 };
 
@@ -59,7 +61,18 @@ const formatJsonAuctionList = (product) => {
         DateEnd:product.DateEnd
     };
 };
-
+const formatJsonpProductList = (product) => {
+    return {
+        id: product.id,
+        IdCategory: product.IdCategory,
+        IdUserBuyer: product.IdUserBuyer,
+        IdUserSeller: product.IdUserSeller,
+        Name: product.Name,
+        NowPrice: product.NowPrice,
+        Description: product.Description,
+        DateEnd:product.DateEnd
+    };
+};
 const compareDate=(date1)=>{
     const currentDate=moment(moment(),"YYYY-MM-DD HH:mm:ss");
     const date = moment(date1,"YYYY-MM-DD HH:mm:sss");
@@ -74,6 +87,8 @@ router.get('/', async function (req, res) {
 var watchList_found = [];
 var auctionList_found = [];
 var winList_found=[];
+var uploadList_found=[];
+var soldList_found=[];
 var user_found;
 
 router.get('/info/:id', async function (req, res) {
@@ -99,11 +114,24 @@ router.get('/info/:id', async function (req, res) {
 
     allProd.map((r)=>{
         if(r.IdUserBuyer==userId && compareDate(r.DateEnd)<=0){
-            winList_found.push(formatJsonAuctionList(r))
+            winList_found.push(formatJsonpProductList(r))
         }
     });
 
-    user_found = formatJson(data, watchList_found,auctionList_found,winList_found)
+    uploadList_found=[]
+    allProd.map((r)=>{
+        if(r.IdUserSeller==userId && compareDate(r.DateEnd)>=0){
+            uploadList_found.push(formatJsonpProductList(r))
+        }
+    })
+    soldList_found=[]
+    allProd.map((r)=>{
+        if(r.IdUserSeller==userId && compareDate(r.DateEnd)<0){
+            soldList_found.push(formatJsonpProductList(r))
+        }
+    })
+
+    user_found = formatJson(data, watchList_found,auctionList_found,winList_found,uploadList_found,soldList_found);
     if (data === 0) {
         return res.status(500).json("was row ecfect").end();
     }
