@@ -120,20 +120,25 @@ router.post("/buys", async (req, res) => {
     if (raw === 0 || raw == null) {
       return res.status(500).json("was row ecfect").end();
     }
-    
-    mailer.send({
-      from: 'webdaugiaonline@gmail.com',
-      to: `${emailHighesBidder[0].Email}`,
-      subject: 'Web Đấu Giá Online: Xem sản phẩm đấu giá.',
-      html: `
-          Xin chào, ${emailHighesBidder[0].Lastname}cảm ơn bạn đã tham gia trang web Đấu Giá Online.
-          Bạn đã bị một người khác đấu giá cao hơn sản phẩm của mình
-          <br> 
-          Hãy truy cập vào <a href="https://fedaugia.herokuapp.com/product/detail/${data.IdProduct}"> sản phẩm </a> để xem chi tiết
-          <br>
-          (Đây là thư tự động vui lòng không phản hồi)
-          `
-    });
+
+    try {
+      mailer.send({
+        from: 'webdaugiaonline@gmail.com',
+        to: `${emailHighesBidder[0].Email}`,
+        subject: 'Web Đấu Giá Online: Xem sản phẩm đấu giá.',
+        html: `
+            Xin chào, ${emailHighesBidder[0].Lastname}cảm ơn bạn đã tham gia trang web Đấu Giá Online.
+            Bạn đã bị một người khác đấu giá cao hơn sản phẩm của mình
+            <br> 
+            Hãy truy cập vào <a href="https://fedaugia.herokuapp.com/product/detail/${data.IdProduct}"> sản phẩm </a> để xem chi tiết
+            <br>
+            (Đây là thư tự động vui lòng không phản hồi)
+            `
+      });
+    } catch(error) {
+
+    }
+
     await productMode.updatePrice(data.IdProduct, data.Price, data.IdUser);
     const sendData = await getBiddersList(data.IdProduct);
     broadcastAll(JSON.stringify(["updateProductDetail", sendData]));
