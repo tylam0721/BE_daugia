@@ -7,6 +7,11 @@ module.exports = {
   findAll() {
     return db(tableName).where("Isdeleted", 0);
   },
+
+  findByKey(key) {
+    return db(tableName).where("Isdeleted", 0).andWhere('Name', 'like', '%'+ key +'%');
+  },
+
   findbyCategory(id) {
     return db(tableName).where("Isdeleted", 0).andWhere("IdCategory", id);
   },

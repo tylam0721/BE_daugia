@@ -186,6 +186,65 @@ router.get("/", async (req, res) => {
   res.status(202).json(product_found);
 });
 
+// GET FIND BY KEY
+router.post("/key", async (req, res) => {
+  const key = req.body.key;
+
+  const data = await productModel.findByKey(key);
+  const getuser = await userModal.findAll();
+  const getimage = await imageModel.findAll();
+  const getdes = await desModel.findAll();
+  const getaction = await actionModel.findAll();
+  product_found = [];
+
+  data.map((r) => {
+    image_found = [];
+    user_buyer_found = [];
+    user_seller_found = [];
+    des_found = [];
+
+    getimage.map((i) => {
+      if (i.IdProduct == r.id) {
+        image_found.push(formatJsonImage(i));
+      }
+    });
+    
+    getaction.map((b) => {
+      if (b.IdProduct == r.id) {
+        getuser.map((u)=>{
+          if(u.id == b.IdUser)
+          {
+            user_buyer_found.push(formatJsonBuyer({
+              id: u.id,
+              Lastname: u.Lastname,
+              DateStart: b.DateStart,
+              Price: b.Price
+            }));
+          }
+        })
+      }
+    });
+    getuser.map((u) => {
+      if (u.id == r.IdUserSeller) {
+        user_seller_found.push(formatJsonUser(u));
+      }
+    });
+    getdes.map((d) => {
+      if (d.IdProduct == r.id) {
+        des_found.push(formatJsonDes(d));
+      }
+    });
+    product_found.push(
+      formatJson(r, user_buyer_found.sort((a, b) => Number(b.Price) - Number(a.Price)), user_seller_found, image_found, des_found)
+    );
+  });
+
+  if (data === 0) {
+    return res.status(500).json("was row ecfect").end();
+  }
+  res.status(202).json(product_found);
+});
+
 // GET Số lượt đánh giá cao nhất
 router.get("/maxauction", async (req, res) => {
   const data = await productModel.findAll();
